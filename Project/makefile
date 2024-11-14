@@ -1,10 +1,37 @@
-cpu: CPU/main.cpp
-	g++ -O3 -o raytracer CPU/main.cpp
+# Compiler
+CXX = g++
+CXXFLAGS = -O3 -std=c++11
 
-run-cpu: cpu
+# Directories
+SRCDIR = CPU
+BUILDDIR = build
+TARGET = raytracer
+
+# Source files
+SOURCES = $(wildcard $(SRCDIR)/*.cpp)
+OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(BUILDDIR)/%.o, $(SOURCES))
+
+# Default target
+all: $(TARGET)
+
+# Build target
+$(TARGET): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+# Build objects
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp | $(BUILDDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Create build directory
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
+
+# Run
+run: all
 	./raytracer > image.ppm
 
-clean-cpu:
-	rm raytracer
+# Clean build
+clean:
+	rm -rf $(BUILDDIR) $(TARGET)
 
-.PHONY: cpu run-cpu clean-cpu
+.PHONY: all run clean
