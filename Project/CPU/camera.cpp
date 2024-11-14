@@ -26,25 +26,31 @@ void camera::initialize() {
 
     _pixel_samples_scale = 1.0 / samples_per_pixel;
 
-    _center = point3(0, 0, 0);
+    _center = lookfrom;
 
     // Camera
-    datatype focal_length = 1.0;
-    datatype viewport_height = 2.0;
+    datatype focal_length = (lookfrom - lookat).length();
+    datatype theta = degrees_to_radians(vfov);
+    datatype h = std::tan(theta / 2);
+    datatype viewport_height = 2 * h * focal_length;
     datatype viewport_width = viewport_height * (datatype(image_width) / _image_height);
     point3 camera_center = point3(0, 0, 0);
 
+    // Camera position
+    _w = unit_vector(lookfrom - lookat);
+    _u = unit_vector(cross(vup, _w));
+    _v = cross(_w, _u);
+
     // Viewports
-    auto viewport_x = vec3(viewport_width, 0, 0);
-    auto viewport_y = vec3(0, -viewport_height, 0);
+    auto viewport_x = viewport_width * _u;
+    auto viewport_y = viewport_height * -_v;
 
     // Pixel distance
     _pixel_delta_x = viewport_x / image_width;
     _pixel_delta_y = viewport_y / _image_height;
 
     // Start pos
-    auto viewport_upper_left = camera_center
-                               - vec3(0, 0, focal_length) - viewport_x / 2 - viewport_y / 2;
+    auto viewport_upper_left = _center - (focal_length * _w) - viewport_x / 2 - viewport_y / 2;
     _pixel00_loc = viewport_upper_left + 0.5 * (_pixel_delta_x + _pixel_delta_y);
 }
 
