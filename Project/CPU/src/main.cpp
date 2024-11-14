@@ -1,13 +1,13 @@
-#include "util.h"
-#include "color.h"
-#include "ray.h"
-#include "vec3.h"
-#include "hittable.h"
-#include "hittable_list.h"
-#include "sphere.h"
-#include "camera.h"
-#include "material.h"
+// Project
+#include <util.h>
+#include <color.h>
+#include <hittable.h>
+#include <hittable_list.h>
+#include <sphere.h>
+#include <camera.h>
+#include <material.h>
 
+// std
 #include <fstream>
 
 void fill_world(hittable_list& world);
@@ -27,7 +27,7 @@ int main() {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1200;
+    cam.image_width       = 400;
     cam.samples_per_pixel = 10;
     cam.max_depth         = 50;
 

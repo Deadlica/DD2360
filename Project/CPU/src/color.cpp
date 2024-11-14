@@ -1,5 +1,6 @@
-#include "color.h"
-#include "interval.h"
+// Project
+#include <color.h>
+#include <interval.h>
 
 void write_color(std::ostream& out, const color& pixel_color) {
     auto r = pixel_color.x();

@@ -1,7 +1,8 @@
-#ifndef PROJECT_RAY_H
-#define PROJECT_RAY_H
+#ifndef CPU_RAY_H
+#define CPU_RAY_H
 
-#include "vec3.h"
+// Project
+#include <vec3.h>
 
 class ray {
 public:
@@ -19,4 +20,4 @@ private:
 };
 
 
-#endif //PROJECT_RAY_H
+#endif //CPU_RAY_H

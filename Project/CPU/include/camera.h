@@ -1,8 +1,9 @@
-#ifndef PROJECT_CAMERA_H
-#define PROJECT_CAMERA_H
+#ifndef CPU_CAMERA_H
+#define CPU_CAMERA_H
 
-#include "hittable.h"
-#include "color.h"
+// Project
+#include <hittable.h>
+#include <color.h>
 
 class camera {
 public:
@@ -43,4 +44,4 @@ private:
 };
 
 
-#endif //PROJECT_CAMERA_H
+#endif //CPU_CAMERA_H

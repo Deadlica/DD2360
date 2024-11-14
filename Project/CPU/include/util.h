@@ -1,6 +1,7 @@
-#ifndef PROJECT_UTIL_H
-#define PROJECT_UTIL_H
+#ifndef CPU_UTIL_H
+#define CPU_UTIL_H
 
+// std
 #include <cmath>
 #include <limits>
 #include <random>
@@ -31,4 +32,4 @@ inline datatype random_real_number(datatype min, datatype max) {
     return min + (max - min) * random_real_number();
 }
 
-#endif //PROJECT_UTIL_H
+#endif //CPU_UTIL_H

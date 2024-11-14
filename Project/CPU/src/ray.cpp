@@ -1,4 +1,5 @@
-#include "ray.h"
+// Project
+#include <ray.h>
 
 ray::ray() {}
 

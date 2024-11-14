@@ -1,8 +1,10 @@
-#ifndef PROJECT_HITTABLE_LIST_H
-#define PROJECT_HITTABLE_LIST_H
+#ifndef CPU_HITTABLE_LIST_H
+#define CPU_HITTABLE_LIST_H
 
-#include "hittable.h"
+// Project
+#include <hittable.h>
 
+// std
 #include <vector>
 
 using hittable_ptr = std::shared_ptr<hittable>;
@@ -20,4 +22,4 @@ public:
 };
 
 
-#endif //PROJECT_HITTABLE_LIST_H
+#endif //CPU_HITTABLE_LIST_H

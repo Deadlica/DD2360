@@ -1,8 +1,10 @@
-#ifndef PROJECT_COLOR_H
-#define PROJECT_COLOR_H
+#ifndef CPU_COLOR_H
+#define CPU_COLOR_H
 
-#include "vec3.h"
+// Project
+#include <vec3.h>
 
+// std
 #include <iostream>
 
 using color = vec3;
@@ -17,4 +19,4 @@ inline datatype linear_to_gamma(datatype linear_component) {
 
 void write_color(std::ostream& out, const color& pixel_color);
 
-#endif //PROJECT_COLOR_H
+#endif //CPU_COLOR_H

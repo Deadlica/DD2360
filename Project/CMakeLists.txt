@@ -4,23 +4,27 @@ project(Project CXX CUDA)
 set(CMAKE_CUDA_STANDARD 11)
 
 add_executable(Raytracer-CPU
-               CPU/main.cpp
-               CPU/vec3.cpp
-               CPU/color.cpp
-               CPU/color.cpp
-               CPU/ray.cpp
-               CPU/hittable.cpp
-               CPU/sphere.cpp
-               CPU/hittable_list.cpp
-               CPU/interval.cpp
-               CPU/camera.cpp
-               CPU/material.cpp
-               CPU/util.h
+               CPU/src/main.cpp
+               CPU/src/vec3.cpp
+               CPU/src/color.cpp
+               CPU/src/color.cpp
+               CPU/src/ray.cpp
+               CPU/src/hittable.cpp
+               CPU/src/sphere.cpp
+               CPU/src/hittable_list.cpp
+               CPU/src/interval.cpp
+               CPU/src/camera.cpp
+               CPU/src/material.cpp
+               CPU/include/util.h
 )
+
+target_include_directories(Raytracer-CPU PRIVATE ${PROJECT_SOURCE_DIR}/CPU/include)
 
 add_executable(Raytracer-GPU
                GPU/main.cu
 )
+
+target_include_directories(Raytracer-GPU PRIVATE ${PROJECT_SOURCE_DIR}/GPU/include)
 
 set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -arch=sm_50 -Wno-deprecated-gpu-targets")
 

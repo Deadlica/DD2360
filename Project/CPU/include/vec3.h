@@ -1,8 +1,10 @@
-#ifndef PROJECT_VEC3_H
-#define PROJECT_VEC3_H
+#ifndef CPU_VEC3_H
+#define CPU_VEC3_H
 
-#include "util.h"
+// Project
+#include <util.h>
 
+// std
 #include <cmath>
 #include <iostream>
 
@@ -117,4 +119,4 @@ inline vec3 refract(const vec3& uv, const vec3& n, datatype etai_over_etat) {
     return r_out_perp + r_out_parallel;
 }
 
-#endif //PROJECT_VEC3_H
+#endif //CPU_VEC3_H

@@ -1,4 +1,5 @@
-#include "hittable.h"
+// Project
+#include <hittable.h>
 
 void hit_record::set_face_normal(const ray& r, const vec3& outward_normal) {
     // "outward_normal" is assumed to have unit length

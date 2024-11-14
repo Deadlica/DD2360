@@ -1,8 +1,9 @@
-#ifndef PROJECT_MATERIAL_H
-#define PROJECT_MATERIAL_H
+#ifndef CPU_MATERIAL_H
+#define CPU_MATERIAL_H
 
-#include "hittable.h"
-#include "color.h"
+// Project
+#include <hittable.h>
+#include <color.h>
 
 class material {
 public:
@@ -44,4 +45,4 @@ private:
     static datatype reflectance(datatype cosine, datatype refraction_index);
 };
 
-#endif //PROJECT_MATERIAL_H
+#endif //CPU_MATERIAL_H

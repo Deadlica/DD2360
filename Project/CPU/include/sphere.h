@@ -1,8 +1,9 @@
-#ifndef PROJECT_SPHERE_H
-#define PROJECT_SPHERE_H
+#ifndef CPU_SPHERE_H
+#define CPU_SPHERE_H
 
-#include "hittable.h"
-#include "vec3.h"
+// Project
+#include <hittable.h>
+#include <vec3.h>
 
 class sphere : public hittable {
 public:
@@ -17,4 +18,4 @@ private:
 };
 
 
-#endif //PROJECT_SPHERE_H
+#endif //CPU_SPHERE_H

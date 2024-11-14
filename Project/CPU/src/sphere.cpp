@@ -1,4 +1,5 @@
-#include "sphere.h"
+// Project
+#include <sphere.h>
 
 sphere::sphere(const point3& center, datatype radius, material_ptr mat)
 : _center(center), _radius(std::fmax(0, radius)), _mat(mat) {}

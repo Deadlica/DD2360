@@ -1,8 +1,9 @@
-#ifndef PROJECT_INTERVAL_H
-#define PROJECT_INTERVAL_H
+#ifndef CPU_INTERVAL_H
+#define CPU_INTERVAL_H
 
-#include "util.h"
-#include "vec3.h"
+// Project
+#include <util.h>
+#include <vec3.h>
 
 class interval {
 public:
@@ -20,4 +21,4 @@ public:
 };
 
 
-#endif //PROJECT_INTERVAL_H
+#endif //CPU_INTERVAL_H

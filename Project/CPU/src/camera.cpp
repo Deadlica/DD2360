@@ -1,5 +1,5 @@
-#include "camera.h"
-#include "material.h"
+#include "../include/camera.h"
+#include "../include/material.h"
 
 void camera::render(const hittable& world) {
     initialize();

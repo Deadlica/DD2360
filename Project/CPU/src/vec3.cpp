@@ -1,4 +1,5 @@
-#include "vec3.h"
+// Project
+#include <vec3.h>
 
 vec3::vec3(): e{0, 0, 0} {}
 

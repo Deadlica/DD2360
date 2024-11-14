@@ -1,9 +1,11 @@
-#ifndef PROJECT_HITTABLE_H
-#define PROJECT_HITTABLE_H
+#ifndef CPU_HITTABLE_H
+#define CPU_HITTABLE_H
 
-#include "ray.h"
-#include "interval.h"
+// Project
+#include <ray.h>
+#include <interval.h>
 
+// std
 #include <memory>
 
 class material;
@@ -29,4 +31,4 @@ public:
 };
 
 
-#endif //PROJECT_HITTABLE_H
+#endif //CPU_HITTABLE_H
