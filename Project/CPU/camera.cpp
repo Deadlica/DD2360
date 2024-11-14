@@ -29,29 +29,33 @@ void camera::initialize() {
     _center = lookfrom;
 
     // Camera
-    datatype focal_length = (lookfrom - lookat).length();
     datatype theta = degrees_to_radians(vfov);
     datatype h = std::tan(theta / 2);
-    datatype viewport_height = 2 * h * focal_length;
+    datatype viewport_height = 2 * h * focus_dist;
     datatype viewport_width = viewport_height * (datatype(image_width) / _image_height);
     point3 camera_center = point3(0, 0, 0);
 
     // Camera position
-    _w = unit_vector(lookfrom - lookat);
-    _u = unit_vector(cross(vup, _w));
-    _v = cross(_w, _u);
+    _z = unit_vector(lookfrom - lookat);
+    _x = unit_vector(cross(vup, _z));
+    _y = cross(_z, _x);
 
     // Viewports
-    auto viewport_x = viewport_width * _u;
-    auto viewport_y = viewport_height * -_v;
+    auto viewport_x = viewport_width * _x;
+    auto viewport_y = viewport_height * -_y;
 
     // Pixel distance
     _pixel_delta_x = viewport_x / image_width;
     _pixel_delta_y = viewport_y / _image_height;
 
     // Start pos
-    auto viewport_upper_left = _center - (focal_length * _w) - viewport_x / 2 - viewport_y / 2;
+    auto viewport_upper_left = _center - (focus_dist * _z) - viewport_x / 2 - viewport_y / 2;
     _pixel00_loc = viewport_upper_left + 0.5 * (_pixel_delta_x + _pixel_delta_y);
+
+    // Camera defocus disk
+    auto defocus_radius = focus_dist * std::tan(degrees_to_radians(defocus_angle / 2));
+    _defocus_disk_x = _x * defocus_radius;
+    _defocus_disk_y = _y * defocus_radius;
 }
 
 ray camera::get_ray(int i, int j) const {
@@ -60,7 +64,7 @@ ray camera::get_ray(int i, int j) const {
                       + ((i + offset.x()) * _pixel_delta_x)
                       + ((j + offset.y()) * _pixel_delta_y);
 
-    auto ray_origin = _center;
+    auto ray_origin = defocus_angle <= 0 ? _center : defocus_disk_sample();
     auto ray_direction = pixel_sample - ray_origin;
 
     return ray(ray_origin, ray_direction);
@@ -71,8 +75,12 @@ vec3 camera::sample_square() const {
 }
 
 vec3 camera::sample_disk(datatype radius) const {
-    //return radius * random_in_unit_disk();
-    return vec3();
+    return radius * random_in_unit_disk();
+}
+
+point3 camera::defocus_disk_sample() const {
+    auto p = random_in_unit_disk();
+    return _center + (p[0] * _defocus_disk_x) + (p[1] * _defocus_disk_y);
 }
 
 color camera::ray_color(const ray& r, int depth, const hittable& world) const {

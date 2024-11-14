@@ -16,6 +16,9 @@ public:
     point3   lookat   = point3(0, 0, -1);
     vec3     vup      = vec3(0, 1, 0);
 
+    datatype defocus_angle = 0;
+    datatype focus_dist    = 10;
+
     void render(const hittable& world);
 
 private:
@@ -25,14 +28,17 @@ private:
     point3   _pixel00_loc;
     vec3     _pixel_delta_x;
     vec3     _pixel_delta_y;
-    vec3     _u;
-    vec3     _v;
-    vec3     _w;
+    vec3     _x;
+    vec3     _y;
+    vec3     _z;
+    vec3     _defocus_disk_x;
+    vec3     _defocus_disk_y;
 
     void initialize();
     ray get_ray(int i, int j) const;
     vec3 sample_square() const;
     vec3 sample_disk(datatype radius) const;
+    point3 defocus_disk_sample() const;
     color ray_color(const ray& r, int depth, const hittable& world) const;
 };
 
