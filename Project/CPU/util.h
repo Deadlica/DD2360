@@ -11,6 +11,7 @@
 
 constexpr datatype infinity = std::numeric_limits<datatype>::infinity();
 constexpr datatype pi = 3.1415926535897932385;
+constexpr datatype eps = 1e-160;
 
 static std::random_device rd;
 static std::mt19937 gen;

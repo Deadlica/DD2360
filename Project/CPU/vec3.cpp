@@ -53,3 +53,11 @@ datatype vec3::length() const {
 datatype vec3::length_squared() const {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 }
+
+vec3 vec3::random() {
+    return vec3(random_real_number(), random_real_number(), random_real_number());
+}
+
+vec3 vec3::random(datatype min, datatype max) {
+    return vec3(random_real_number(min, max), random_real_number(min, max), random_real_number(min, max));
+}

@@ -26,6 +26,9 @@ public:
 
     datatype length() const;
     datatype length_squared() const;
+
+    static vec3 random();
+    static vec3 random(datatype min, datatype max);
 };
 
 using point3 = vec3;
@@ -72,6 +75,24 @@ inline vec3 cross(const vec3& lhs, const vec3& rhs) {
 
 inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
+}
+
+inline vec3 random_unit_vector() {
+    while (true) {
+        auto p = vec3::random(-1, 1);
+        auto lensq = p.length_squared();
+        if (eps < lensq && lensq <= 1) {
+            return p / std::sqrt(lensq);
+        }
+    }
+}
+
+inline vec3 random_on_hemisphere(const vec3& normal) {
+    vec3 on_unit_sphere = random_unit_vector();
+    if (dot(on_unit_sphere, normal) > 0.0) {
+        return on_unit_sphere;
+    }
+    return -on_unit_sphere;
 }
 
 #endif //PROJECT_VEC3_H
