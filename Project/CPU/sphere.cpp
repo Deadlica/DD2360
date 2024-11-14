@@ -1,6 +1,6 @@
 #include "sphere.h"
 
-sphere::sphere(const point3& center, double radius): _center(center), _radius(std::fmax(0, radius)) {}
+sphere::sphere(const point3& center, datatype radius): _center(center), _radius(std::fmax(0, radius)) {}
 
 bool sphere::hit(const ray& r, interval ray_t, hit_record& rec) const {
     vec3 oc = _center - r.origin();

@@ -11,7 +11,7 @@ public:
     const point3& origin() const;
     const vec3& direction() const;
 
-    point3 at(double t) const;
+    point3 at(datatype t) const;
 
 private:
     point3 _origin;

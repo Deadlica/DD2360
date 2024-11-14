@@ -1,10 +1,10 @@
 #ifndef PROJECT_VEC3_H
 #define PROJECT_VEC3_H
 
+#include "util.h"
+
 #include <cmath>
 #include <iostream>
-
-#define datatype double
 
 class vec3 {
 public:

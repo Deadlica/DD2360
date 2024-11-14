@@ -6,7 +6,7 @@
 
 class interval {
 public:
-    double min, max;
+    datatype min, max;
 
     interval();
     interval(datatype min, datatype max);
@@ -14,6 +14,7 @@ public:
     datatype size() const;
     bool contains(datatype x) const;
     bool surrounds(datatype x) const;
+    datatype clamp(datatype x) const;
 
     static const interval empty, universe;
 };

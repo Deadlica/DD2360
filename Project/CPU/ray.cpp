@@ -12,6 +12,6 @@ const vec3& ray::direction() const {
     return _direction;
 }
 
-point3 ray::at(double t) const {
+point3 ray::at(datatype t) const {
     return _origin + t * _direction;
 }
