@@ -27,6 +27,8 @@ public:
     datatype length() const;
     datatype length_squared() const;
 
+    bool near_zero() const;
+
     static vec3 random();
     static vec3 random(datatype min, datatype max);
 };
@@ -93,6 +95,10 @@ inline vec3 random_on_hemisphere(const vec3& normal) {
         return on_unit_sphere;
     }
     return -on_unit_sphere;
+}
+
+inline vec3 reflect(const vec3& v, const vec3& n) {
+    return v - 2 * dot(v, n) * n;
 }
 
 #endif //PROJECT_VEC3_H

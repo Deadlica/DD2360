@@ -4,10 +4,17 @@
 #include "ray.h"
 #include "interval.h"
 
+#include <memory>
+
+class material;
+
+using material_ptr = std::shared_ptr<material>;
+
 class hit_record {
 public:
     point3 p;
     vec3 normal;
+    material_ptr mat;
     datatype t;
     bool front_face;
 

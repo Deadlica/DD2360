@@ -3,7 +3,6 @@
 
 #include "hittable.h"
 
-#include <memory>
 #include <vector>
 
 using hittable_ptr = std::shared_ptr<hittable>;

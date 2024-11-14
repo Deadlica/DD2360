@@ -12,10 +12,10 @@ add_executable(Raytracer-CPU
                CPU/hittable.cpp
                CPU/sphere.cpp
                CPU/hittable_list.cpp
-               CPU/util.h
                CPU/interval.cpp
                CPU/camera.cpp
-               CPU/camera.h
+               CPU/material.cpp
+               CPU/util.h
 )
 
 add_executable(Raytracer-GPU

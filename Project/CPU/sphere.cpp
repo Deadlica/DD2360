@@ -1,6 +1,7 @@
 #include "sphere.h"
 
-sphere::sphere(const point3& center, datatype radius): _center(center), _radius(std::fmax(0, radius)) {}
+sphere::sphere(const point3& center, datatype radius, material_ptr mat)
+: _center(center), _radius(std::fmax(0, radius)), _mat(mat) {}
 
 bool sphere::hit(const ray& r, interval ray_t, hit_record& rec) const {
     vec3 oc = _center - r.origin();
@@ -27,6 +28,7 @@ bool sphere::hit(const ray& r, interval ray_t, hit_record& rec) const {
     rec.p = r.at(rec.t);
     vec3 outward_normal = (rec.p - _center) / _radius;
     rec.set_face_normal(r, outward_normal);
+    rec.mat = _mat;
 
     return true;
 }
