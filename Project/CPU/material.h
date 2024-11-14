@@ -32,4 +32,16 @@ private:
     datatype _fuzz;
 };
 
+class dielectric : public material {
+public:
+    dielectric(datatype refraction_index);
+
+    bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override;
+
+private:
+    datatype _refraction_index;
+
+    static datatype reflectance(datatype cosine, datatype refraction_index);
+};
+
 #endif //PROJECT_MATERIAL_H
