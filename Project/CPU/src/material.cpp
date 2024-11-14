@@ -29,7 +29,7 @@ bool metal::scatter(const ray& r_in, const hit_record& rec, color& attenuation, 
     return (dot(scattered.direction(), rec.normal) > 0);
 }
 
-dielectric::dielectric(double refraction_index): _refraction_index(refraction_index) {}
+dielectric::dielectric(datatype refraction_index): _refraction_index(refraction_index) {}
 
 bool dielectric::scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const {
     attenuation = color(1.0, 1.0, 1.0);
