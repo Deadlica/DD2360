@@ -21,7 +21,7 @@ add_executable(Raytracer-CPU
 target_include_directories(Raytracer-CPU PRIVATE ${PROJECT_SOURCE_DIR}/CPU/include)
 
 add_executable(Raytracer-GPU
-               GPU/main.cu
+               GPU/src/main.cu
 )
 
 target_include_directories(Raytracer-GPU PRIVATE ${PROJECT_SOURCE_DIR}/GPU/include)
