@@ -11,4 +11,4 @@ This repository contains the lab assignments and project for the DD2360 course.
 
 ## Project
 
-- [Project](https://github.com/Deadlica/DD2360/tree/main/Project)
+- [Project: Raytracer](https://github.com/Deadlica/DD2360/tree/main/Project)
