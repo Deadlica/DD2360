@@ -3,6 +3,7 @@ project(Project CXX CUDA)
 
 set(CMAKE_CUDA_STANDARD 11)
 
+# CPU version
 add_executable(Raytracer-CPU
                CPU/src/main.cpp
                CPU/src/vec3.cpp
@@ -20,8 +21,10 @@ add_executable(Raytracer-CPU
 
 target_include_directories(Raytracer-CPU PRIVATE ${PROJECT_SOURCE_DIR}/CPU/include)
 
+# GPU version
 add_executable(Raytracer-GPU
                GPU/src/main.cu
+               GPU/include/util.cuh
 )
 
 target_include_directories(Raytracer-GPU PRIVATE ${PROJECT_SOURCE_DIR}/GPU/include)
