@@ -24,6 +24,7 @@ target_include_directories(Raytracer-CPU PRIVATE ${PROJECT_SOURCE_DIR}/CPU/inclu
 # GPU version
 add_executable(Raytracer-GPU
                GPU/src/main.cu
+               GPU/src/vec3.cu
                GPU/include/util.cuh
 )
 

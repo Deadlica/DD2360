@@ -1,19 +1,18 @@
 // Project
 #include <util.cuh>
+#include <vec3.cuh>
 
 // std
 #include <fstream>
 
-__global__ void render(datatype *fb, int max_x, int max_y) {
+__global__ void render(vec3* frame_buffer, int max_x, int max_y) {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
     int y = threadIdx.y + blockIdx.y * blockDim.y;
     if (x >= max_x || y >= max_y) {
         return;
     }
-    int pixel_index = y * max_x * 3 + x * 3;
-    fb[pixel_index + 0] = datatype(x) / max_x;
-    fb[pixel_index + 1] = datatype(y) / max_y;
-    fb[pixel_index + 2] = 0.2;
+    int pixel_index = y * max_x + x;
+    frame_buffer[pixel_index] = vec3(datatype(x) / max_x, datatype(y) / max_y, datatype(0.2));
 }
 
 int main() {
@@ -22,12 +21,12 @@ int main() {
     std::streambuf* standard_out = std::cout.rdbuf();
     std::cout.rdbuf(output.rdbuf());
 
-    int image_width          = 1920;
-    int image_height         = 1080;
+    int image_width          = 800;
+    int image_height         = 400;
     int num_pixels           = image_width * image_height;
-    size_t frame_buffer_size = 3 * num_pixels * sizeof(datatype);
+    size_t frame_buffer_size = num_pixels * sizeof(vec3);
 
-    datatype* frame_buffer;
+    vec3* frame_buffer;
     checkCudaErrors(cudaMallocManaged((void**) &frame_buffer, frame_buffer_size));
 
     dim3 db(TPB.x, TPB.y);
@@ -36,17 +35,14 @@ int main() {
     checkCudaErrors(cudaGetLastError());
     checkCudaErrors(cudaDeviceSynchronize());
 
-    // Output FB as Image
+    // Output frame_buffer as Image
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
     for (int j = 0; j < image_height; j++) {
         for (int i = 0; i < image_width; i++) {
-            size_t pixel_index = j * 3 * image_width + i * 3;
-            datatype r = frame_buffer[pixel_index + 0];
-            datatype g = frame_buffer[pixel_index + 1];
-            datatype b = frame_buffer[pixel_index + 2];
-            int ir = int(255.99 * r);
-            int ig = int(255.99 * g);
-            int ib = int(255.99 * b);
+            size_t pixel_index = j * image_width + i;
+            int ir = int(255.99 * frame_buffer[pixel_index].r());
+            int ig = int(255.99 * frame_buffer[pixel_index].g());
+            int ib = int(255.99 * frame_buffer[pixel_index].b());
             std::cout << ir << " " << ig << " " << ib << "\n";
         }
     }
