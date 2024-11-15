@@ -1,5 +1,5 @@
-#ifndef GPU_VEC3_H
-#define GPU_VEC3_H
+#ifndef GPU_VEC3_CUH
+#define GPU_VEC3_CUH
 
 // Project
 #include <util.cuh>
@@ -93,4 +93,4 @@ __host__ __device__ inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
 }
 
-#endif //GPU_VEC3_H
+#endif //GPU_VEC3_CUH

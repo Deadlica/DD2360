@@ -8,7 +8,6 @@ add_executable(Raytracer-CPU
                CPU/src/main.cpp
                CPU/src/vec3.cpp
                CPU/src/color.cpp
-               CPU/src/color.cpp
                CPU/src/ray.cpp
                CPU/src/hittable.cpp
                CPU/src/sphere.cpp
@@ -25,6 +24,8 @@ target_include_directories(Raytracer-CPU PRIVATE ${PROJECT_SOURCE_DIR}/CPU/inclu
 add_executable(Raytracer-GPU
                GPU/src/main.cu
                GPU/src/vec3.cu
+               GPU/src/color.cu
+               GPU/src/ray.cu
                GPU/include/util.cuh
 )
 
