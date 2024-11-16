@@ -69,6 +69,9 @@ int main() {
     vec3* frame_buffer;
     checkCudaErrors(cudaMallocManaged((void**) &frame_buffer, frame_buffer_size));
 
+    timeval start;
+    timer_start(&start);
+
     dim3 db(TPB.x, TPB.y);
     dim3 dg((image_width + db.x - 1) / db.x, (image_height + db.y - 1) / db.y);
     render<<<dg, db>>>(frame_buffer, image_width, image_height,
@@ -78,6 +81,10 @@ int main() {
                        camera_center);
     checkCudaErrors(cudaGetLastError());
     checkCudaErrors(cudaDeviceSynchronize());
+
+    double time_elapsed;
+    timer_stop(&start, &time_elapsed);
+    std::clog << "Rendering time: " << time_elapsed << " seconds.\n";
 
     // Output frame_buffer as Image
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
