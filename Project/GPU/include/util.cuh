@@ -7,7 +7,7 @@
 
 #define datatype float
 constexpr dim3 TPB = {32, 32};
-//__device__ constexpr datatype infinity = std::numeric_limits<datatype>::infinity();
+__device__ const datatype infinity = datatype(1.0) / datatype(0.0);
 //__device__ constexpr datatype pi = 3.1415926535897932385;
 //__device__ constexpr datatype eps = 1e-160;
 

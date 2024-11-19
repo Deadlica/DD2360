@@ -26,6 +26,11 @@ add_executable(Raytracer-GPU
                GPU/src/vec3.cu
                GPU/src/color.cu
                GPU/src/ray.cu
+               GPU/src/hittable.cu
+               GPU/src/hittable_list.cu
+               GPU/src/sphere.cu
+               GPU/src/interval.cu
+               GPU/src/camera.cu
                GPU/include/util.cuh
 )
 
