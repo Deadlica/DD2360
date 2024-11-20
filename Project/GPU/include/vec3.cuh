@@ -1,12 +1,11 @@
 #ifndef GPU_VEC3_CUH
 #define GPU_VEC3_CUH
 
-// Project
-#include <util.cuh>
-
 // std
 #include <cmath>
 #include <iostream>
+
+#define datatype float
 
 class vec3 {
 public:
@@ -36,6 +35,7 @@ public:
 
     __host__ __device__ datatype length() const;
     __host__ __device__ datatype length_squared() const;
+    __host__ __device__ bool near_zero() const;
     __host__ __device__ void     make_unit_vector();
 };
 
@@ -91,6 +91,10 @@ __host__ __device__ inline vec3 cross(const vec3& lhs, const vec3& rhs) {
 
 __host__ __device__ inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
+}
+
+__host__ __device__ inline vec3 reflect(const vec3& v, const vec3& n) {
+    return v - 2 * dot(v, n) * n;
 }
 
 #endif //GPU_VEC3_CUH

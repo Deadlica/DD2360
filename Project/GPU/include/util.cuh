@@ -1,9 +1,13 @@
 #ifndef GPU_UTIL_CUH
 #define GPU_UTIL_CUH
 
+// Project
+#include <vec3.cuh>
+
 // std
 #include <iostream>
 #include <sys/time.h>
+#include <curand_kernel.h>
 
 #define datatype float
 constexpr dim3 TPB = {32, 32};
@@ -19,6 +23,15 @@ inline void check_cuda(cudaError_t result, char const *const func, const char *c
         cudaDeviceReset();
         exit(99);
     }
+}
+
+#define RANDVEC3 vec3(curand_uniform(local_rand_state), curand_uniform(local_rand_state), curand_uniform(local_rand_state))
+__device__ inline vec3 random_in_unit_sphere(curandState* local_rand_state) {
+    vec3 p;
+    do {
+        p = datatype(2.0) * RANDVEC3 - vec3(1, 1, 1);
+    } while (p.length_squared() >= datatype(1.0));
+    return p;
 }
 
 inline void timer_start(struct timeval* start) {

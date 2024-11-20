@@ -11,8 +11,8 @@ public:
 
     __device__ bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
 
-    hittable** list{};
-    int list_size{};
+    hittable** list;
+    int list_size;
 };
 
 #endif //GPU_HITTABLE_LIST_CUH

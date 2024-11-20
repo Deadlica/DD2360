@@ -5,11 +5,14 @@
 #include <ray.cuh>
 #include <interval.cuh>
 
+class material;
+
 struct hit_record {
     point3 p;
     vec3 normal;
     datatype t;
     bool front_face;
+    material* mat;
 
     __device__ void set_face_normal(const ray& r, const vec3& outward_normal);
 };

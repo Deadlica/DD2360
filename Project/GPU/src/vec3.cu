@@ -92,6 +92,11 @@ __host__ __device__ datatype vec3::length_squared() const {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 }
 
+__host__ __device__ bool vec3::near_zero() const {
+    datatype s = 1e-8;
+    return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
+}
+
 __host__ __device__ void vec3::make_unit_vector() {
     datatype k = 1.0 / std::sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
     e[0] *= k;

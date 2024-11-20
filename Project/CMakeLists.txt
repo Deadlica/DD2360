@@ -31,6 +31,7 @@ add_executable(Raytracer-GPU
                GPU/src/sphere.cu
                GPU/src/interval.cu
                GPU/src/camera.cu
+               GPU/src/material.cu
                GPU/include/util.cuh
 )
 

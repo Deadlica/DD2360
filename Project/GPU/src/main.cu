@@ -7,11 +7,11 @@
 #include <hittable_list.cuh>
 #include <sphere.cuh>
 #include <camera.cuh>
+#include <material.cuh>
 
 // std
 #include <fstream>
 #include <curand_kernel.h>
-#include <cassert>
 
 __global__ void render(vec3* frame_buffer, int max_x, int max_y,
                        camera** cam, hittable** world, curandState* rand_state) {
@@ -28,8 +28,8 @@ __global__ void render(vec3* frame_buffer, int max_x, int max_y,
     for (int sample = 0; sample < samples_per_pixel; sample++) {
         datatype dx = datatype(x + curand_uniform(&local_rand_state));
         datatype dy = datatype(y + curand_uniform(&local_rand_state));
-        ray r = (*cam)->get_ray(dx, dy);
-        pixel_color += (*cam)->ray_color(r, world);
+        ray r = (*cam)->get_ray(dx, dy, &local_rand_state);
+        pixel_color += (*cam)->ray_color(r, world, &local_rand_state);
     }
     frame_buffer[pixel_index] = pixel_color / datatype(samples_per_pixel);
 }
@@ -37,9 +37,16 @@ __global__ void render(vec3* frame_buffer, int max_x, int max_y,
 __global__ void create_world(hittable** d_list, hittable** d_world, camera** d_camera,
                              datatype aspect_ratio, int image_width, int samples_per_pixel) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
-        *d_list       = new sphere(vec3(0, 0, -1), 0.5);
-        *(d_list + 1) = new sphere(vec3(0, -100.5, -1), 100);
-        *d_world      = new hittable_list(d_list, 2);
+        d_list[0] = new sphere(vec3(0,      0, -1), 0.5,
+                               new lambertian(vec3(0.8, 0.3, 0.3)));
+        d_list[1] = new sphere(vec3(0, -100.5, -1), 100,
+                               new lambertian(vec3(0.8, 0.8, 0.0)));
+        d_list[2] = new sphere(vec3(1,      0, -1), 0.5,
+                               new metal(vec3(0.8, 0.6, 0.2), 1.0));
+        d_list[3] = new sphere(vec3(-1,     0, -1), 0.5,
+                               new metal(vec3(0.8, 0.8, 0.8), 0.3));
+
+        *d_world      = new hittable_list(d_list, 4);
         *d_camera     = new camera();
         (*d_camera)->aspect_ratio      = aspect_ratio;
         (*d_camera)->image_width       = image_width;
@@ -49,8 +56,10 @@ __global__ void create_world(hittable** d_list, hittable** d_world, camera** d_c
 }
 
 __global__ void delete_world(hittable** d_list, hittable** d_world, camera** d_camera) {
-    delete *d_list;
-    delete *(d_list + 1);
+    for (int i = 0; i < 4; i++) {
+        delete ((sphere*) d_list[i])->mat;
+        delete d_list[i];
+    }
     delete *d_world;
     delete *d_camera;
 }
@@ -67,19 +76,20 @@ int main() {
     int      image_height      = int(image_width / aspect_ratio);
     int      samples_per_pixel = 100;
     image_height = image_height < 1 ? 1 : image_height;
+    int      num_pixels        = image_width * image_height;
 
     // Frame buffer
-    size_t frame_buffer_size = image_width * image_height * sizeof(vec3);
+    size_t frame_buffer_size = num_pixels * sizeof(vec3);
     vec3* frame_buffer;
     checkCudaErrors(cudaMallocManaged((void**) &frame_buffer, frame_buffer_size));
 
     // Curand
     curandState *d_rand_state;
-    checkCudaErrors(cudaMalloc((void**) &d_rand_state, frame_buffer_size * sizeof(curandState)));
+    checkCudaErrors(cudaMalloc((void**) &d_rand_state, num_pixels * sizeof(curandState)));
 
     // World
     hittable** d_list;
-    checkCudaErrors(cudaMalloc((void**) &d_list, 2 * sizeof(hittable*)));
+    checkCudaErrors(cudaMalloc((void**) &d_list, 4 * sizeof(hittable*)));
     hittable** d_world;
     checkCudaErrors(cudaMalloc((void**) &d_world, sizeof(hittable*)));
     camera**   d_camera;

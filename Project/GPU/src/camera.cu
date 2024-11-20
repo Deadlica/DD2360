@@ -1,5 +1,6 @@
 // Project
 #include <camera.cuh>
+#include <material.cuh>
 
 __device__ void camera::initialize() {
     _image_height = int(image_width / aspect_ratio);
@@ -27,18 +28,33 @@ __device__ void camera::initialize() {
     _pixel00_loc = viewport_upper_left + 0.5 * (_pixel_delta_x + _pixel_delta_y);
 }
 
-__device__ ray camera::get_ray(datatype x, datatype y) const {
+__device__ ray camera::get_ray(datatype x, datatype y, curandState* local_rand_state) const {
     return ray(_center, _pixel00_loc + x * _pixel_delta_x + y * _pixel_delta_y);
 }
 
-__device__ color camera::ray_color(const ray& r, hittable** world) const {
-    hit_record rec;
-    if((*world)->hit(r, interval(0, infinity), rec)) {
-        return datatype(0.5) * vec3(rec.normal.x() + datatype(1.0),
-                                    rec.normal.y() + datatype(1.0),
-                                    rec.normal.z() + datatype(1.0));
+__device__ color camera::ray_color(const ray& r, hittable** world, curandState* local_rand_state) const {
+    ray curr_ray = r;
+    color curr_attenuation = color(1.0, 1.0, 1.0);
+    for (int i = 0; i < 50; i++) {
+        hit_record rec;
+        if ((*world)->hit(curr_ray, interval(datatype(0.001), infinity), rec)) {
+            ray scattered;
+            color attenuation;
+            if(rec.mat->scatter(r, rec, attenuation, scattered, local_rand_state)) {
+                curr_attenuation *= attenuation;
+                curr_ray = scattered;
+            }
+            else {
+                return color(0.0, 0.0, 0.0);
+            }
+        }
+        else {
+            vec3 unit_direction = unit_vector(curr_ray.direction());
+            datatype a = datatype(0.5) * (unit_direction.y() + datatype(1.0));
+            vec3 c = (datatype(1.0) - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
+            return curr_attenuation * c;
+        }
     }
-    vec3 unit_direction = unit_vector(r.direction());
-    datatype a = datatype(0.5) * (unit_direction.y() + datatype(1.0));
-    return (datatype(1.0) - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
+
+    return color(0.0, 0.0, 0.0);
 }

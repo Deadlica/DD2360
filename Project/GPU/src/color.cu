@@ -1,17 +1,12 @@
 // Project
 #include <color.cuh>
-//#include <interval.cuh>
+#include <interval.cuh>
 
 __host__ void write_color(std::ostream& out, const color& pixel_color) {
     auto r = pixel_color.r();
     auto g = pixel_color.g();
     auto b = pixel_color.b();
 
-    int rbyte = int(255.999 * r);
-    int gbyte = int(255.999 * g);
-    int bbyte = int(255.999 * b);
-
-    /*
     r = linear_to_gamma(r);
     g = linear_to_gamma(g);
     b = linear_to_gamma(b);
@@ -20,7 +15,6 @@ __host__ void write_color(std::ostream& out, const color& pixel_color) {
     int rbyte = int(256 * intensity.clamp(r));
     int gbyte = int(256 * intensity.clamp(g));
     int bbyte = int(256 * intensity.clamp(b));
-     */
 
     out << rbyte << " " << gbyte << " " << bbyte << "\n";
 }

@@ -16,8 +16,8 @@ public:
     int      samples_per_pixel = 10;
 
     __device__ void initialize();
-    __device__ ray get_ray(datatype x, datatype y) const;
-    __device__ color ray_color(const ray& r, hittable** world) const;
+    __device__ ray get_ray(datatype x, datatype y, curandState* local_rand_state) const;
+    __device__ color ray_color(const ray& r, hittable** world, curandState* local_rand_state) const;
 
 private:
     int    _image_height;
