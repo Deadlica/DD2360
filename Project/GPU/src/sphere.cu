@@ -15,7 +15,7 @@ __device__ bool sphere::hit(const ray& r, interval ray_t, hit_record& rec) const
     auto c = oc.length_squared() - _radius * _radius;
 
     auto discriminant = h * h - a * c;
-    if (discriminant < 0) {
+    if (discriminant < datatype(0.0)) {
         return false;
     }
     auto sqrtd = std::sqrt(discriminant);

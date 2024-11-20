@@ -33,4 +33,19 @@ private:
     datatype _fuzz;
 };
 
+class dielectric : public material {
+public:
+    __device__ dielectric(datatype refraction_index);
+
+    __device__ bool scatter(const ray& r_in, const hit_record& rec, color& attenuation,
+                            ray& scattered, curandState* local_rand_state) const override;
+
+private:
+    datatype _refraction_index;
+
+    __device__ static datatype reflectance(datatype cosine, datatype refraction_index);
+};
+
+__device__ bool refract(const vec3& v, const vec3& n, datatype ni_over_nt, vec3& refracted);
+
 #endif //GPU_MATERIAL_CUH

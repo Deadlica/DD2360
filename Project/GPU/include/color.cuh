@@ -10,11 +10,11 @@
 using color = vec3;
 
 __host__ inline datatype linear_to_gamma(datatype linear_component) {
-    if (linear_component > 0) {
+    if (linear_component > datatype(0.0)) {
         return std::sqrt(linear_component);
     }
 
-    return 0;
+    return datatype(0.0);
 }
 
 __host__ void write_color(std::ostream& out, const color& pixel_color);

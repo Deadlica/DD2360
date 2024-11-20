@@ -29,7 +29,7 @@ __device__ void camera::initialize() {
 }
 
 __device__ ray camera::get_ray(datatype x, datatype y, curandState* local_rand_state) const {
-    return ray(_center, _pixel00_loc + x * _pixel_delta_x + y * _pixel_delta_y);
+    return ray(_center, _pixel00_loc + x * _pixel_delta_x + y * _pixel_delta_y - _center);
 }
 
 __device__ color camera::ray_color(const ray& r, hittable** world, curandState* local_rand_state) const {
@@ -40,7 +40,7 @@ __device__ color camera::ray_color(const ray& r, hittable** world, curandState* 
         if ((*world)->hit(curr_ray, interval(datatype(0.001), infinity), rec)) {
             ray scattered;
             color attenuation;
-            if(rec.mat->scatter(r, rec, attenuation, scattered, local_rand_state)) {
+            if(rec.mat->scatter(curr_ray, rec, attenuation, scattered, local_rand_state)) {
                 curr_attenuation *= attenuation;
                 curr_ray = scattered;
             }

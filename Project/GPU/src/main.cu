@@ -21,7 +21,7 @@ __global__ void render(vec3* frame_buffer, int max_x, int max_y,
         return;
     }
     int pixel_index = y * max_x + x;
-    curand_init(1984, pixel_index, 0, &rand_state[pixel_index]);
+    curand_init(1984 + pixel_index, 0, 0, &rand_state[pixel_index]);
     curandState local_rand_state = rand_state[pixel_index];
     int samples_per_pixel = (*cam)->samples_per_pixel;
     color pixel_color(0, 0, 0);
@@ -31,22 +31,26 @@ __global__ void render(vec3* frame_buffer, int max_x, int max_y,
         ray r = (*cam)->get_ray(dx, dy, &local_rand_state);
         pixel_color += (*cam)->ray_color(r, world, &local_rand_state);
     }
+    rand_state[pixel_index] = local_rand_state;
     frame_buffer[pixel_index] = pixel_color / datatype(samples_per_pixel);
 }
 
 __global__ void create_world(hittable** d_list, hittable** d_world, camera** d_camera,
                              datatype aspect_ratio, int image_width, int samples_per_pixel) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
-        d_list[0] = new sphere(vec3(0,      0, -1), 0.5,
-                               new lambertian(vec3(0.8, 0.3, 0.3)));
-        d_list[1] = new sphere(vec3(0, -100.5, -1), 100,
-                               new lambertian(vec3(0.8, 0.8, 0.0)));
-        d_list[2] = new sphere(vec3(1,      0, -1), 0.5,
-                               new metal(vec3(0.8, 0.6, 0.2), 1.0));
-        d_list[3] = new sphere(vec3(-1,     0, -1), 0.5,
-                               new metal(vec3(0.8, 0.8, 0.8), 0.3));
+        material* material_ground = new lambertian(color(0.8, 0.8, 0.0));
+        material* material_center = new lambertian(color(0.1, 0.2, 0.5));
+        material* material_left   = new dielectric(1.50);
+        material* material_bubble = new dielectric(1.00 / 1.50);
+        material* material_right  = new metal(color(0.8, 0.6, 0.2), 0.0);
 
-        *d_world      = new hittable_list(d_list, 4);
+        d_list[0] = new sphere(point3( 0.0, -100.5, -1.0), 100.0, material_ground);
+        d_list[1] = new sphere(point3( 0.0,    0.0, -1.2),   0.5, material_center);
+        d_list[2] = new sphere(point3(-1.0,    0.0, -1.0),   0.5, material_left);
+        d_list[3] = new sphere(point3(-1.0,    0.0, -1.0),   0.4, material_bubble);
+        d_list[4] = new sphere(point3( 1.0,    0.0, -1.0),   0.5, material_right);
+
+        *d_world      = new hittable_list(d_list, 5);
         *d_camera     = new camera();
         (*d_camera)->aspect_ratio      = aspect_ratio;
         (*d_camera)->image_width       = image_width;
@@ -56,7 +60,7 @@ __global__ void create_world(hittable** d_list, hittable** d_world, camera** d_c
 }
 
 __global__ void delete_world(hittable** d_list, hittable** d_world, camera** d_camera) {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         delete ((sphere*) d_list[i])->mat;
         delete d_list[i];
     }
@@ -89,7 +93,7 @@ int main() {
 
     // World
     hittable** d_list;
-    checkCudaErrors(cudaMalloc((void**) &d_list, 4 * sizeof(hittable*)));
+    checkCudaErrors(cudaMalloc((void**) &d_list, 5 * sizeof(hittable*)));
     hittable** d_world;
     checkCudaErrors(cudaMalloc((void**) &d_world, sizeof(hittable*)));
     camera**   d_camera;

@@ -5,7 +5,9 @@
 #include <cmath>
 #include <iostream>
 
+#ifndef datatype
 #define datatype float
+#endif
 
 class vec3 {
 public:
@@ -35,7 +37,7 @@ public:
 
     __host__ __device__ datatype length() const;
     __host__ __device__ datatype length_squared() const;
-    __host__ __device__ bool near_zero() const;
+    __host__ __device__ bool     near_zero() const;
     __host__ __device__ void     make_unit_vector();
 };
 
@@ -95,6 +97,16 @@ __host__ __device__ inline vec3 unit_vector(const vec3& v) {
 
 __host__ __device__ inline vec3 reflect(const vec3& v, const vec3& n) {
     return v - 2 * dot(v, n) * n;
+}
+
+__host__ __device__ inline vec3 refract(const vec3& uv, const vec3& n, datatype etai_over_etat) {
+    datatype dot_uv = dot(-uv, n);
+    datatype cos_theta = dot_uv < datatype(1.0) ? dot_uv : datatype(1.0);
+    vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
+    datatype fabs_val = datatype(1.0) - r_out_perp.length_squared();
+    fabs_val = fabs_val < 0 ? fabs_val * datatype(-1.0) : fabs_val;
+    vec3 r_out_parallel = -std::sqrt(fabs_val) * n;
+    return r_out_perp + r_out_parallel;
 }
 
 #endif //GPU_VEC3_CUH

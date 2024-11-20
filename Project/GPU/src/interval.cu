@@ -1,6 +1,9 @@
 // Project
 #include <interval.cuh>
 
+const interval interval::empty    = interval(+infinity, -infinity);
+const interval interval::universe = interval(-infinity, +infinity);
+
 __host__ __device__ interval::interval(): min(+infinity), max(-infinity) {}
 
 __host__ __device__ interval::interval(datatype min, datatype max): min(min), max(max) {}

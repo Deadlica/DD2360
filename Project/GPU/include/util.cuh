@@ -8,12 +8,21 @@
 #include <iostream>
 #include <sys/time.h>
 #include <curand_kernel.h>
+#include <float.h>
 
+#ifndef datatype
 #define datatype float
+#endif
+#ifndef M_PI
+#define M_PI 3.1415926535897932385
+#endif
+#if   defined(datatype) && datatype == float
+#define infinity FLT_MAX
+#elif defined(datatype) && datatype == double
+#define infinity DBL_MAX
+#endif
+
 constexpr dim3 TPB = {32, 32};
-__device__ const datatype infinity = datatype(1.0) / datatype(0.0);
-//__device__ constexpr datatype pi = 3.1415926535897932385;
-//__device__ constexpr datatype eps = 1e-160;
 
 #define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__)
 inline void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
