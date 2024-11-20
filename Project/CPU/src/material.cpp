@@ -19,7 +19,8 @@ bool lambertian::scatter(const ray& r_in, const hit_record& rec, color& attenuat
     return true;
 }
 
-metal::metal(const color& albedo, datatype fuzz): _albedo(albedo), _fuzz(fuzz) {}
+metal::metal(const color& albedo, datatype fuzz)
+: _albedo(albedo), _fuzz(fuzz < 1 ? fuzz : 1) {}
 
 bool metal::scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const {
     vec3 reflected = reflect(r_in.direction(), rec.normal);
