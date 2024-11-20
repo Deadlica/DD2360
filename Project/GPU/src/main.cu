@@ -13,6 +13,15 @@
 #include <fstream>
 #include <curand_kernel.h>
 
+constexpr int num_hittables = 22 * 22 + 1 + 3;
+constexpr int seed          = 1984;
+
+__global__ void rand_init(curandState* rand_state) {
+    if (threadIdx.x == 0 && blockIdx.x == 0) {
+        curand_init(seed, 0, 0, rand_state);
+    }
+}
+
 __global__ void render(vec3* frame_buffer, int max_x, int max_y,
                        camera** cam, hittable** world, curandState* rand_state) {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -35,22 +44,44 @@ __global__ void render(vec3* frame_buffer, int max_x, int max_y,
     frame_buffer[pixel_index] = pixel_color / datatype(samples_per_pixel);
 }
 
+#ifndef RND
+#define RND (curand_uniform(&local_rand_state))
+#endif
+
 __global__ void create_world(hittable** d_list, hittable** d_world,
-                             camera** d_camera, cam_record rec) {
+                             camera** d_camera, cam_record rec, curandState* rand_state) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
-        material* material_ground = new lambertian(color(0.8, 0.8, 0.0));
-        material* material_center = new lambertian(color(0.1, 0.2, 0.5));
-        material* material_left   = new dielectric(1.50);
-        material* material_bubble = new dielectric(1.00 / 1.50);
-        material* material_right  = new metal(color(0.8, 0.6, 0.2), 0.0);
+        curandState local_rand_state = *rand_state;
+        d_list[0] = new sphere(vec3(0, -1000.0, -1), 1000,
+                               new lambertian(vec3(0.5, 0.5, 0.5)));
 
-        d_list[0] = new sphere(point3( 0.0, -100.5, -1.0), 100.0, material_ground);
-        d_list[1] = new sphere(point3( 0.0,    0.0, -1.2),   0.5, material_center);
-        d_list[2] = new sphere(point3(-1.0,    0.0, -1.0),   0.5, material_left);
-        d_list[3] = new sphere(point3(-1.0,    0.0, -1.0),   0.4, material_bubble);
-        d_list[4] = new sphere(point3( 1.0,    0.0, -1.0),   0.5, material_right);
+        int i = 1;
+        for (int a = -11; a < 11; a++) {
+            for (int b = -11; b < 11; b++) {
+                datatype choose_mat = RND;
+                vec3 center(a + RND, 0.2, b + RND);
+                if (choose_mat < datatype(0.8)) {
+                    d_list[i++] = new sphere(center, 0.2,
+                                             new lambertian(vec3(RND * RND, RND * RND, RND * RND)));
+                }
+                else if (choose_mat < datatype(0.95)) {
+                    d_list[i++] = new sphere(center, 0.2,
+                                             new metal(vec3(datatype(0.5) * (datatype(1.0) + RND),
+                                                            datatype(0.5) * (datatype(1.0) + RND),
+                                                            datatype(0.5) * (datatype(1.0) + RND)),
+                                                       datatype(0.5) * RND));
+                }
+                else {
+                    d_list[i++] = new sphere(center, 0.2, new dielectric(1.5));
+                }
+            }
+        }
+        d_list[i++] = new sphere(vec3( 0, 1, 0), 1.0, new dielectric(1.5));
+        d_list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
+        d_list[i++] = new sphere(vec3( 4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
+        *rand_state = local_rand_state;
 
-        *d_world      = new hittable_list(d_list, 5);
+        *d_world      = new hittable_list(d_list, num_hittables);
         *d_camera     = new camera();
         (*d_camera)->aspect_ratio      = rec.aspect_ratio;
         (*d_camera)->image_width       = rec.image_width;
@@ -66,7 +97,7 @@ __global__ void create_world(hittable** d_list, hittable** d_world,
 }
 
 __global__ void delete_world(hittable** d_list, hittable** d_world, camera** d_camera) {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < num_hittables; i++) {
         delete ((sphere*) d_list[i])->mat;
         delete d_list[i];
     }
@@ -83,14 +114,14 @@ int main() {
     // Camera variables
     cam_record rec;
     rec.aspect_ratio      = datatype(16.0) / datatype(9.0);
-    rec.image_width       = 800;
-    rec.samples_per_pixel = 100;
+    rec.image_width       = 1200;
+    rec.samples_per_pixel = 10;
     rec.vfov              = 20;
-    rec.lookfrom          = point3(-2, 2,  1);
-    rec.lookat            = point3( 0, 0, -1);
-    rec.vup               = vec3  ( 0, 1,  0);
-    rec.defocus_angle     = 10.0;
-    rec.focus_dist        = 3.4;
+    rec.lookfrom          = point3(13, 2, 3);
+    rec.lookat            = point3( 0, 0, 0);
+    rec.vup               = vec3  ( 0, 1, 0);
+    rec.defocus_angle     = 0.6;
+    rec.focus_dist        = 10.0;
 
 
     int image_height = int(rec.image_width / rec.aspect_ratio);
@@ -105,15 +136,21 @@ int main() {
     // Curand
     curandState *d_rand_state;
     checkCudaErrors(cudaMalloc((void**) &d_rand_state, num_pixels * sizeof(curandState)));
+    curandState *d_rand_state2;
+    checkCudaErrors(cudaMalloc((void**) &d_rand_state2, sizeof(curandState)));
+
+    rand_init<<<1, 1>>>(d_rand_state2);
+    checkCudaErrors(cudaGetLastError());
+    checkCudaErrors(cudaDeviceSynchronize());
 
     // World
     hittable** d_list;
-    checkCudaErrors(cudaMalloc((void**) &d_list, 5 * sizeof(hittable*)));
+    checkCudaErrors(cudaMalloc((void**) &d_list, num_hittables * sizeof(hittable*)));
     hittable** d_world;
     checkCudaErrors(cudaMalloc((void**) &d_world, sizeof(hittable*)));
     camera**   d_camera;
     checkCudaErrors(cudaMalloc((void**) &d_camera, sizeof(camera*)));
-    create_world<<<1, 1>>>(d_list, d_world, d_camera, rec);
+    create_world<<<1, 1>>>(d_list, d_world, d_camera, rec, d_rand_state2);
     checkCudaErrors(cudaGetLastError());
     checkCudaErrors(cudaDeviceSynchronize());
 
@@ -149,7 +186,7 @@ int main() {
     checkCudaErrors(cudaFree(d_camera));
     checkCudaErrors(cudaFree(d_world));
     checkCudaErrors(cudaFree(d_list));
-    checkCudaErrors(cudaFree(d_rand_state));
+    checkCudaErrors(cudaFree(d_rand_state2));
     checkCudaErrors(cudaFree(frame_buffer));
     cudaDeviceReset();
 
