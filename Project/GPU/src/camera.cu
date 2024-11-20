@@ -6,25 +6,31 @@ __device__ void camera::initialize() {
     _image_height = int(image_width / aspect_ratio);
     _image_height = _image_height < 1 ? 1 : _image_height;
 
-    _center = point3(0, 0, 0);
+    _center = lookfrom;
 
     // Camera
-    datatype focal_length = 1.0;
-    datatype viewport_height = 2.0;
+    datatype focal_length = (lookfrom - lookat).length();
+    datatype theta        = degrees_to_radians(vfov);
+    datatype h            = std::tan(theta / 2);
+    datatype viewport_height = datatype(2.0) * h * focal_length;
     datatype viewport_width = viewport_height * (datatype(image_width) / _image_height);
     point3 camera_center = point3(0, 0, 0);
 
+    // Camera position
+    _z = unit_vector(lookfrom - lookat);
+    _x = unit_vector(cross(vup, _z));
+    _y = cross(_z, _x);
+
     // Viewports
-    auto viewport_x = vec3(viewport_width, 0, 0);
-    auto viewport_y = vec3(0, -viewport_height, 0);
+    auto viewport_x = viewport_width * _x;
+    auto viewport_y = viewport_height * -_y;
 
     // Pixel distance
     _pixel_delta_x = viewport_x / image_width;
     _pixel_delta_y = viewport_y / _image_height;
 
     // Start pos
-    auto viewport_upper_left = camera_center
-                               - vec3(0, 0, focal_length) - viewport_x / 2 - viewport_y / 2;
+    vec3 viewport_upper_left = _center - (focal_length * _z) - viewport_x / 2 - viewport_y / 2;
     _pixel00_loc = viewport_upper_left + 0.5 * (_pixel_delta_x + _pixel_delta_y);
 }
 

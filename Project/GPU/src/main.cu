@@ -35,8 +35,8 @@ __global__ void render(vec3* frame_buffer, int max_x, int max_y,
     frame_buffer[pixel_index] = pixel_color / datatype(samples_per_pixel);
 }
 
-__global__ void create_world(hittable** d_list, hittable** d_world, camera** d_camera,
-                             datatype aspect_ratio, int image_width, int samples_per_pixel) {
+__global__ void create_world(hittable** d_list, hittable** d_world,
+                             camera** d_camera, cam_record rec) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
         material* material_ground = new lambertian(color(0.8, 0.8, 0.0));
         material* material_center = new lambertian(color(0.1, 0.2, 0.5));
@@ -52,9 +52,13 @@ __global__ void create_world(hittable** d_list, hittable** d_world, camera** d_c
 
         *d_world      = new hittable_list(d_list, 5);
         *d_camera     = new camera();
-        (*d_camera)->aspect_ratio      = aspect_ratio;
-        (*d_camera)->image_width       = image_width;
-        (*d_camera)->samples_per_pixel = samples_per_pixel;
+        (*d_camera)->aspect_ratio      = rec.aspect_ratio;
+        (*d_camera)->image_width       = rec.image_width;
+        (*d_camera)->samples_per_pixel = rec.samples_per_pixel;
+        (*d_camera)->vfov              = rec.vfov;
+        (*d_camera)->lookfrom          = rec.lookfrom;
+        (*d_camera)->lookat            = rec.lookat;
+        (*d_camera)->vup               = rec.vup;
         (*d_camera)->initialize();
     }
 }
@@ -75,12 +79,19 @@ int main() {
     std::cout.rdbuf(output.rdbuf());
 
     // Camera variables
-    datatype aspect_ratio      = datatype(16.0) / datatype(9.0);
-    int      image_width       = 800;
-    int      image_height      = int(image_width / aspect_ratio);
-    int      samples_per_pixel = 100;
-    image_height = image_height < 1 ? 1 : image_height;
-    int      num_pixels        = image_width * image_height;
+    cam_record rec;
+    rec.aspect_ratio      = datatype(16.0) / datatype(9.0);
+    rec.image_width       = 800;
+    rec.samples_per_pixel = 100;
+    rec.vfov              = 20;
+    rec.lookfrom          = point3(-2, 2,  1);
+    rec.lookat            = point3( 0, 0, -1);
+    rec.vup               = vec3  ( 0, 1,  0);
+
+
+    int image_height = int(rec.image_width / rec.aspect_ratio);
+    image_height     = image_height < 1 ? 1 : image_height;
+    int num_pixels   = rec.image_width * image_height;
 
     // Frame buffer
     size_t frame_buffer_size = num_pixels * sizeof(vec3);
@@ -98,8 +109,7 @@ int main() {
     checkCudaErrors(cudaMalloc((void**) &d_world, sizeof(hittable*)));
     camera**   d_camera;
     checkCudaErrors(cudaMalloc((void**) &d_camera, sizeof(camera*)));
-    create_world<<<1, 1>>>(d_list, d_world, d_camera,
-                           aspect_ratio, image_width, samples_per_pixel);
+    create_world<<<1, 1>>>(d_list, d_world, d_camera, rec);
     checkCudaErrors(cudaGetLastError());
     checkCudaErrors(cudaDeviceSynchronize());
 
@@ -108,9 +118,9 @@ int main() {
 
     // Rendering
     dim3 db(TPB.x, TPB.y);
-    dim3 dg((image_width + db.x - 1) / db.x, (image_height + db.y - 1) / db.y);
+    dim3 dg((rec.image_width + db.x - 1) / db.x, (image_height + db.y - 1) / db.y);
 
-    render<<<dg, db>>>(frame_buffer, image_width, image_height,
+    render<<<dg, db>>>(frame_buffer, rec.image_width, image_height,
                        d_camera, d_world, d_rand_state);
     checkCudaErrors(cudaGetLastError());
     checkCudaErrors(cudaDeviceSynchronize());
@@ -120,10 +130,10 @@ int main() {
     std::clog << "Rendering time: " << time_elapsed << " seconds.\n";
 
     // Output frame_buffer as Image
-    std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
+    std::cout << "P3\n" << rec.image_width << " " << image_height << "\n255\n";
     for (int j = 0; j < image_height; j++) {
-        for (int i = 0; i < image_width; i++) {
-            size_t pixel_index = j * image_width + i;
+        for (int i = 0; i < rec.image_width; i++) {
+            size_t pixel_index = j * rec.image_width + i;
             write_color(std::cout, frame_buffer[pixel_index]);
         }
     }

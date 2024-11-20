@@ -43,6 +43,10 @@ __device__ inline vec3 random_in_unit_sphere(curandState* local_rand_state) {
     return p;
 }
 
+__host__ __device__ inline datatype degrees_to_radians(datatype degrees) {
+    return degrees * M_PI / datatype(180.0);
+}
+
 inline void timer_start(struct timeval* start) {
     gettimeofday(start, nullptr);
 }
