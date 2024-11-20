@@ -4,6 +4,7 @@
 // std
 #include <cmath>
 #include <iostream>
+#include <curand_kernel.h>
 
 #ifndef datatype
 #define datatype float
@@ -93,6 +94,16 @@ __host__ __device__ inline vec3 cross(const vec3& lhs, const vec3& rhs) {
 
 __host__ __device__ inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
+}
+
+__device__ inline vec3 random_in_unit_disk(curandState *local_rand_state) {
+    vec3 p;
+    do {
+        p = datatype(2.0) * vec3(curand_uniform(local_rand_state),
+                                 curand_uniform(local_rand_state),0)
+                          - vec3(1, 1, 0);
+    } while (dot(p, p) >= datatype(1.0));
+    return p;
 }
 
 __host__ __device__ inline vec3 reflect(const vec3& v, const vec3& n) {

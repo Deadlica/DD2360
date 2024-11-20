@@ -59,6 +59,8 @@ __global__ void create_world(hittable** d_list, hittable** d_world,
         (*d_camera)->lookfrom          = rec.lookfrom;
         (*d_camera)->lookat            = rec.lookat;
         (*d_camera)->vup               = rec.vup;
+        (*d_camera)->defocus_angle     = rec.defocus_angle;
+        (*d_camera)->focus_dist        = rec.focus_dist;
         (*d_camera)->initialize();
     }
 }
@@ -87,6 +89,8 @@ int main() {
     rec.lookfrom          = point3(-2, 2,  1);
     rec.lookat            = point3( 0, 0, -1);
     rec.vup               = vec3  ( 0, 1,  0);
+    rec.defocus_angle     = 10.0;
+    rec.focus_dist        = 3.4;
 
 
     int image_height = int(rec.image_width / rec.aspect_ratio);

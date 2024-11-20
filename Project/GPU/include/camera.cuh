@@ -17,6 +17,9 @@ struct cam_record {
     point3   lookfrom          = point3(0, 0, 0);
     point3   lookat            = point3(0, 0, -1);
     vec3     vup               = vec3(0, 1, 0);
+
+    datatype defocus_angle     = 0;
+    datatype focus_dist        = 10;
 };
 
 class camera {
@@ -29,6 +32,9 @@ public:
     point3   lookfrom          = point3(0, 0, 0);
     point3   lookat            = point3(0, 0, -1);
     vec3     vup               = vec3(0, 1, 0);
+
+    datatype defocus_angle     = 0;
+    datatype focus_dist        = 10;
 
     __device__ void initialize();
     __device__ ray get_ray(datatype x, datatype y, curandState* local_rand_state) const;
@@ -43,6 +49,10 @@ private:
     vec3   _x;
     vec3   _y;
     vec3   _z;
+    vec3   _defocus_disk_x;
+    vec3   _defocus_disk_y;
+
+    __device__ point3 defocus_disk_sample(curandState* local_rand_state) const;
 };
 
 #endif //GPU_CAMERA_CUH

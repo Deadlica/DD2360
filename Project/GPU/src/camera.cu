@@ -9,10 +9,9 @@ __device__ void camera::initialize() {
     _center = lookfrom;
 
     // Camera
-    datatype focal_length = (lookfrom - lookat).length();
     datatype theta        = degrees_to_radians(vfov);
     datatype h            = std::tan(theta / 2);
-    datatype viewport_height = datatype(2.0) * h * focal_length;
+    datatype viewport_height = datatype(2.0) * h * focus_dist;
     datatype viewport_width = viewport_height * (datatype(image_width) / _image_height);
     point3 camera_center = point3(0, 0, 0);
 
@@ -30,12 +29,21 @@ __device__ void camera::initialize() {
     _pixel_delta_y = viewport_y / _image_height;
 
     // Start pos
-    vec3 viewport_upper_left = _center - (focal_length * _z) - viewport_x / 2 - viewport_y / 2;
+    vec3 viewport_upper_left = _center - (focus_dist * _z) - viewport_x / 2 - viewport_y / 2;
     _pixel00_loc = viewport_upper_left + 0.5 * (_pixel_delta_x + _pixel_delta_y);
+
+    // Camera defocus disk
+    auto defocus_radius = focus_dist * std::tan(degrees_to_radians(defocus_angle / 2));
+    _defocus_disk_x = _x * defocus_radius;
+    _defocus_disk_y = _y * defocus_radius;
 }
 
 __device__ ray camera::get_ray(datatype x, datatype y, curandState* local_rand_state) const {
-    return ray(_center, _pixel00_loc + x * _pixel_delta_x + y * _pixel_delta_y - _center);
+    //return ray(_center, _pixel00_loc + x * _pixel_delta_x + y * _pixel_delta_y - _center);
+    vec3 pixel_sample    = _pixel00_loc + x * _pixel_delta_x + y * _pixel_delta_y;
+    point3 ray_origin    = defocus_angle <= 0 ? _center : defocus_disk_sample(local_rand_state);
+    vec3   ray_direction = pixel_sample - ray_origin;
+    return ray(ray_origin, ray_direction);
 }
 
 __device__ color camera::ray_color(const ray& r, hittable** world, curandState* local_rand_state) const {
@@ -63,4 +71,9 @@ __device__ color camera::ray_color(const ray& r, hittable** world, curandState* 
     }
 
     return color(0.0, 0.0, 0.0);
+}
+
+__device__ point3 camera::defocus_disk_sample(curandState* local_rand_state) const {
+    vec3 p = random_in_unit_disk(local_rand_state);
+    return _center + (p[0] * _defocus_disk_x) + (p[1] * _defocus_disk_y);
 }
