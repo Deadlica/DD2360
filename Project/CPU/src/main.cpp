@@ -37,13 +37,13 @@ int main() {
     cam.samples_per_pixel = 10;
     cam.max_depth         = 50;
 
-    cam.vfov     = 20;
-    cam.lookfrom = point3(13, 2, 3);
-    cam.lookat   = point3(0, 0, 0);
-    cam.vup      = vec3(0, 1, 0);
+    cam.vfov              = 20;
+    cam.lookfrom          = point3(13, 2, 3);
+    cam.lookat            = point3(0, 0, 0);
+    cam.vup               = vec3(0, 1, 0);
 
-    cam.defocus_angle = 0.6;
-    cam.focus_dist    = 10.0;
+    cam.defocus_angle     = 0.6;
+    cam.focus_dist        = 10.0;
 
     cam.render(world);
 
