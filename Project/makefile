@@ -2,6 +2,9 @@
 CXX = g++
 CXXFLAGS = -O3 -std=c++11
 
+NVCC = nvcc
+NVCCFLAGS = -O3 -arch=sm_50 -Wno-deprecated-gpu-targets --compiler-options="-fPIC" -Xcompiler -rdynamic
+
 # Directories
 CPU_SRCDIR = CPU/src
 CPU_INCDIR = CPU/include
@@ -18,6 +21,7 @@ CPU_OBJECTS = $(patsubst $(CPU_SRCDIR)/%.cpp, $(BUILDDIR)/cpu_%.o, $(CPU_SOURCES
 GPU_SOURCES = $(wildcard $(GPU_SRCDIR)/*.cu)
 GPU_OBJECTS = $(patsubst $(GPU_SRCDIR)/%.cu, $(BUILDDIR)/gpu_%.o, $(GPU_SOURCES))
 
+
 # Default target
 all: $(TARGET_CPU) $(TARGET_GPU)
 
@@ -27,7 +31,8 @@ $(TARGET_CPU): $(CPU_OBJECTS) | $(BUILDDIR)
 
 # GPU Build target
 $(TARGET_GPU): $(GPU_OBJECTS) | $(BUILDDIR)
-	nvcc -O3 -arch=sm_50 -o $@ $^
+	$(NVCC) $(NVCCFLAGS) --disable-warnings -dlink $(GPU_OBJECTS) -o $(BUILDDIR)/gpu_dlink.o
+	$(NVCC) $(NVCCFLAGS) -o $@ $(GPU_OBJECTS) $(BUILDDIR)/gpu_dlink.o
 
 # Build CPU objects
 $(BUILDDIR)/cpu_%.o: $(CPU_SRCDIR)/%.cpp | $(BUILDDIR)
@@ -35,7 +40,7 @@ $(BUILDDIR)/cpu_%.o: $(CPU_SRCDIR)/%.cpp | $(BUILDDIR)
 
 # Build GPU objects
 $(BUILDDIR)/gpu_%.o: $(GPU_SRCDIR)/%.cu | $(BUILDDIR)
-	nvcc -O3 -arch=sm_50 -I$(GPU_INCDIR) -c $< -o $@
+	$(NVCC) $(NVCCFLAGS) -I$(GPU_INCDIR) -dc $< -o $@
 
 # Create build directory
 $(BUILDDIR):
