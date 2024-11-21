@@ -11,6 +11,7 @@
 
 // std
 #include <fstream>
+#include <unistd.h>
 #include <curand_kernel.h>
 
 constexpr int num_hittables = 22 * 22 + 1 + 3;
@@ -107,9 +108,14 @@ __global__ void delete_world(hittable** d_list, hittable** d_world, camera** d_c
 
 int main() {
     // output setup
-    std::ofstream output("image.ppm");
-    std::streambuf* standard_out = std::cout.rdbuf();
-    std::cout.rdbuf(output.rdbuf());
+    bool redirect = isatty(fileno(stdout));
+    std::ofstream output;
+    std::streambuf* standard_out;
+    if (redirect) {
+        output.open("image_gpu.ppm");
+        standard_out = std::cout.rdbuf();
+        std::cout.rdbuf(output.rdbuf());
+    }
 
     // Camera variables
     cam_record rec;
@@ -191,7 +197,10 @@ int main() {
     cudaDeviceReset();
 
     // restore stdout
-    std::cout.rdbuf(standard_out);
-    output.close();
+    if (redirect) {
+        std::cout.rdbuf(standard_out);
+        output.close();
+    }
+
     return 0;
 }

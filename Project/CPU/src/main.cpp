@@ -9,14 +9,20 @@
 
 // std
 #include <fstream>
+#include <unistd.h>
 
 void fill_world(hittable_list& world);
 
 int main() {
     // output setup
-    std::ofstream output("image.ppm");
-    std::streambuf* standard_out = std::cout.rdbuf();
-    std::cout.rdbuf(output.rdbuf());
+    bool redirect = isatty(fileno(stdout));
+    std::ofstream output;
+    std::streambuf* standard_out;
+    if (redirect) {
+        output.open("image_cpu.ppm");
+        standard_out = std::cout.rdbuf();
+        std::cout.rdbuf(output.rdbuf());
+    }
 
     hittable_list world;
 
@@ -42,8 +48,10 @@ int main() {
     cam.render(world);
 
     // restore stdout
-    std::cout.rdbuf(standard_out);
-    output.close();
+    if (redirect) {
+        std::cout.rdbuf(standard_out);
+        output.close();
+    }
     return 0;
 }
 
