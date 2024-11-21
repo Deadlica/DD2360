@@ -1,7 +1,7 @@
 <h1 align="center">Raytracing on CPU vs GPU</h1>
 
 <p align="center">
-    <img src="https://github.com/Deadlica/DD2360/blob/main/Project/images/image_cpu.png" alt="Image of raytraced spheres" width="400" height="400">
+    <img src="https://github.com/Deadlica/DD2360/blob/main/Project/images/README_logo.png" alt="Image of raytraced spheres" width="711" height="400">
 </p>
 
 
