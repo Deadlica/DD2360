@@ -14,7 +14,7 @@
 
 ## Introduction
 ___
-This repository provides two implementations of a ray tracing application: one using the CPU and another written in `CUDA` to leverage the GPU. The CPU version is based on the ray tracing application presented by Peter Shirley in his book [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html), while the GPU version is inspired by an Nvidia [blog post](https://developer.nvidia.com/blog/accelerated-ray-tracing-cuda/).
+This repository provides two implementations of a ray tracing application: one using the CPU and another written in `CUDA` to leverage the GPU. The CPU version is based on the ray tracing application presented by Peter Shirley in his book [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html), while the GPU version is inspired by an [Nvidia blog post](https://developer.nvidia.com/blog/accelerated-ray-tracing-cuda/).
 
 The CPU implementation closely follows Peter Shirley's version with minor adjustments, whereas the GPU implementation differs slightly more from the blog post. The Nvidia blog introduces significant changes that diverge from Shirley's approach, while our GPU version aims to mimic the CPU implementation as closely as possible. As a result, our GPU version is more aligned with Shirley's original CPU-based design.
 
