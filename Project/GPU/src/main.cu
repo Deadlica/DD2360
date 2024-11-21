@@ -122,10 +122,12 @@ int main() {
     rec.aspect_ratio      = datatype(16.0) / datatype(9.0);
     rec.image_width       = 1200;
     rec.samples_per_pixel = 10;
+
     rec.vfov              = 20;
     rec.lookfrom          = point3(13, 2, 3);
     rec.lookat            = point3( 0, 0, 0);
     rec.vup               = vec3  ( 0, 1, 0);
+
     rec.defocus_angle     = 0.6;
     rec.focus_dist        = 10.0;
 
