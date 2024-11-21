@@ -1,0 +1,9 @@
+@INCLUDE               = Doxygen/shared_config.doxyfile
+PROJECT_NAME           = "CPU Raytracer"
+PROJECT_BRIEF          = "CPU-based Implementation"
+PROJECT_NUMBER         = 1.0
+INPUT                  = CPU README.md
+HTML_OUTPUT            = cpu
+STRIP_FROM_PATH        = CPU
+FILE_PATTERNS          = *.cpp *.h
+USE_MDFILE_AS_MAINPAGE = README.md

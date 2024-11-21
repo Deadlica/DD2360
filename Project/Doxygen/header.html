@@ -1,0 +1,120 @@
+<!-- header.html -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="generator" content="Doxygen $doxygenversion"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    $treeview
+    $search
+    $mathjax
+    <link href="$relpath^tabs.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="$relpath^jquery.js"></script>
+    <script type="text/javascript" src="$relpath^dynsections.js"></script>
+    <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
+    $extrastylesheet
+    <style>
+        #titlearea {
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-bottom: none;
+            position: relative;  /* Added */
+            z-index: 1000;      /* Added */
+        }
+
+        #projectname {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        #projectbrief {
+            font-size: 14px;
+            opacity: 0.9;
+            color: white;
+        }
+
+        #menu-container {    /* New container */
+            position: relative;
+            z-index: 1001;
+            display: block;
+            margin-right: 20px;
+        }
+
+        #main-menu-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: rgba(255,255,255,0.15);
+            color: white !important;
+            text-decoration: none !important;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            position: relative;    /* Added */
+            z-index: 1002;        /* Added */
+            opacity: 1 !important; /* Added */
+            visibility: visible !important; /* Added */
+        }
+
+        #main-menu-btn:hover {
+            background-color: rgba(255,255,255,0.25);
+            transform: translateY(-1px);
+            text-decoration: none;
+            color: white !important;
+        }
+
+        #main-menu-btn::before {
+            content: "←";
+            margin-right: 8px;
+        }
+
+        #projectalign {
+            padding: 0 20px;
+        }
+
+        #titlearea table {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;  /* Added */
+            z-index: 999;       /* Added */
+        }
+
+        #titlearea td {
+            position: relative;  /* Added */
+            z-index: 1000;      /* Added */
+        }
+
+        @media (max-width: 768px) {
+            #titlearea table td {
+                display: block;
+                text-align: center;
+                padding: 5px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="top">
+    <div id="titlearea">
+        <table cellspacing="0" cellpadding="0">
+            <tbody>
+            <tr>
+                <td id="projectalign">
+                    <div id="projectname">$projectname</div>
+                    <div id="projectbrief">$projectbrief</div>
+                </td>
+                <td style="text-align: right;">
+                    <div id="menu-container">
+                        <a href="$relpath^../index.html" id="main-menu-btn">Main Menu</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

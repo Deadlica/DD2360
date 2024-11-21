@@ -1,9 +1,11 @@
 <h1 align="center">Raytracing on CPU vs GPU</h1>
 
-<p align="center">
-    <img src="https://github.com/Deadlica/DD2360/blob/main/Project/images/README_logo.png" alt="Image of raytraced spheres" width="711" height="400">
-</p>
-
+<div style="text-align: center;">
+    <img src="https://raw.githubusercontent.com/Deadlica/DD2360/refs/heads/main/Project/images/README_logo.png" 
+         alt="Image of raytraced spheres" 
+         width="711" 
+         height="400">
+</div>
 
 <br />
 
@@ -43,9 +45,13 @@ sudo apt-get install doxygen
 # For Arch
 sudo pacman -S doxygen
 ```
-and thereafter simply run:
+and thereafter simply run either of the following commands:
 ```bash
-doxygen Doxyfile
+# Generates documentation with make
+make docs
+
+# Generates documentation without make
+doxygen Doxygen/CPU/Doxyfile && doxygen Doxygen/GPU/Doxyfile && cp Doxygen/index.html docs
 ```
 to generate the html pages.
 

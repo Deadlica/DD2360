@@ -1,0 +1,11 @@
+# Shared configuration settings
+PROJECT_NUMBER         = 1.0
+OUTPUT_DIRECTORY       = docs
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+RECURSIVE              = YES
+HTML_HEADER            = Doxygen/header.html
+HTML_EXTRA_FILES       = ../index.html

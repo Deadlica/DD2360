@@ -6,13 +6,17 @@ NVCC = nvcc
 NVCCFLAGS = -O3 -arch=sm_50 -Wno-deprecated-gpu-targets --compiler-options="-fPIC" -Xcompiler -rdynamic
 
 # Directories
-CPU_SRCDIR = CPU/src
-CPU_INCDIR = CPU/include
-GPU_SRCDIR = GPU/src
-GPU_INCDIR = GPU/include
-BUILDDIR = build
-TARGET_CPU = raytracer_cpu
-TARGET_GPU = raytracer_gpu
+CPU_SRCDIR   = CPU/src
+CPU_INCDIR   = CPU/include
+GPU_SRCDIR   = GPU/src
+GPU_INCDIR   = GPU/include
+BUILDDIR     = build
+DOCSDIR      = docs
+TARGET_CPU   = raytracer_cpu
+TARGET_GPU   = raytracer_gpu
+CPU_DOXYFILE = Doxygen/CPU/Doxyfile
+GPU_DOXYFILE = Doxygen/GPU/Doxyfile
+CUSTOM_INDEX = Doxygen/index.html
 
 # Source files
 CPU_SOURCES = $(wildcard $(CPU_SRCDIR)/*.cpp)
@@ -56,6 +60,12 @@ run_gpu: $(TARGET_GPU)
 
 # Clean build
 clean:
-	rm -rf $(BUILDDIR) $(TARGET_CPU) $(TARGET_GPU)
+	rm -rf $(BUILDDIR) $(TARGET_CPU) $(TARGET_GPU) $(DOCSDIR)
 
-.PHONY: all run_cpu run_gpu clean
+# Generate docs
+docs:
+	doxygen $(CPU_DOXYFILE)
+	doxygen $(GPU_DOXYFILE)
+	cp $(CUSTOM_INDEX) $(DOCSDIR)
+
+.PHONY: all run_cpu run_gpu clean docs
