@@ -11,6 +11,12 @@
 #include <fstream>
 #include <unistd.h>
 
+/**
+ * @brief Fills the world with objects (spheres) of different materials.
+ *
+ * @param world A reference to a `hittable_list` object that will hold the generated
+ *              spheres and materials.
+ */
 void fill_world(hittable_list& world);
 
 int main() {
