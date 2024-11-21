@@ -20,13 +20,13 @@ jobs:
       - name: Generate CPU Documentation
         run: |
           cd Project
-          doxygen Doxyfile/CPU/Doxyfile
+          doxygen Doxygen/CPU/Doxyfile
 
       # Generate Doxygen documentation for GPU      
       - name: Generate GPU Documentation
         run: |
           cd Project
-          doxygen Doxyfile/GPU/Doxyfile
+          doxygen Doxygen/GPU/Doxyfile
 
       # Copy custom index.html into the docs folder      
       - name: Add Custom Index Page
