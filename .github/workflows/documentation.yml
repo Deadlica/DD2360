@@ -9,18 +9,37 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
+      # Check out the repository
       - uses: actions/checkout@v3
+
+      # Install Doxygen
       - name: Install Doxygen
         run: sudo apt-get update && sudo apt-get install -y doxygen
-      - name: Generate Doxygen documentation
+
+      # Generate Doxygen documentation for CPU      
+      - name: Generate CPU Documentation
         run: |
           cd Project
-          doxygen Doxyfile
+          doxygen Doxyfile/CPU/Doxyfile
+
+      # Generate Doxygen documentation for GPU      
+      - name: Generate GPU Documentation
+        run: |
+          cd Project
+          doxygen Doxyfile/GPU/Doxyfile
+
+      # Copy custom index.html into the docs folder      
+      - name: Add Custom Index Page
+        run: |
+          cd Project
+          cp Doxygen/index.html docs
+
+      # Deploy to docs branch
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           publish_branch: docs
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: Project/html
+          publish_dir: Project/docs
           force_orphan: true
