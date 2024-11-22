@@ -14,6 +14,7 @@
  */
 class sphere : public hittable {
 public:
+
     /**
      * @brief Constructs a sphere with a specified center, radius, and material.
      *

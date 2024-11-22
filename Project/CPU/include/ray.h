@@ -14,6 +14,7 @@
  */
 class ray {
 public:
+
     /**
      * @brief Default constructor that initializes a ray with zero origin and direction.
      */

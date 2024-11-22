@@ -281,7 +281,7 @@ inline vec3 reflect(const vec3& v, const vec3& n) {
 }
 
 /**
- * Refracts a vector through a surface with a given normal, using Schlick's approximation for refraction.
+ * Refracts a vector through a surface with a given normal, using Snell' law.
  *
  * @param uv The incident vector (incoming ray).
  * @param n The normal vector of the surface.

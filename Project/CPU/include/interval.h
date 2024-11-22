@@ -52,6 +52,7 @@ public:
      * @return `true` if the value is outside the interval but the interval surrounds it, otherwise `false`.
      */
     bool surrounds(datatype x) const;
+
     /**
      * @brief Clamps a value within the bounds of the interval.
      *

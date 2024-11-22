@@ -21,6 +21,7 @@ public:
      * @brief Default constructor for an empty hittable list.
      */
     hittable_list();
+
     /**
      * @brief Constructs a hittable list with a single object.
      *

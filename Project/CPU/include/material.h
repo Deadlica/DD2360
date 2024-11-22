@@ -40,6 +40,7 @@ public:
  */
 class lambertian : public material {
 public:
+
     /**
      * @brief Constructs a Lambertian material with a given albedo color.
      *
@@ -70,6 +71,7 @@ private:
  */
 class metal : public material {
 public:
+
     /**
      * @brief Constructs a Metal material with a given albedo and fuzz factor.
      *
@@ -102,6 +104,7 @@ private:
  */
 class dielectric : public material {
 public:
+
     /**
      * @brief Constructs a Dielectric material with a given refraction index.
      *
@@ -124,7 +127,7 @@ private:
     datatype _refraction_index;
 
     /**
-     * @brief Computes the reflectance based on the angle of incidence and refractive index.
+     * @brief Computes the reflectance based on the angle of incidence and refractive index (Schlick's approximation).
      *
      * @param cosine The cosine of the angle of incidence.
      * @param refraction_index The refractive index of the material.

@@ -14,15 +14,36 @@
 #include <unistd.h>
 #include <curand_kernel.h>
 
-constexpr int num_hittables = 22 * 22 + 1 + 3;
-constexpr int seed          = 1984;
+constexpr int num_hittables = 22 * 22 + 1 + 3; ///< Total number of hittable objects in the scene
+constexpr int seed          = 1984;            ///< Random seed used for generating random numbers
 
+/**
+ * @brief Initializes the random state for curand.
+ *
+ * This kernel initializes the curand state used for generating random numbers on the GPU.
+ * It sets up the random number generator using the provided seed.
+ *
+ * @param rand_state Pointer to the random state structure on the device.
+ */
 __global__ void rand_init(curandState* rand_state) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
         curand_init(seed, 0, 0, rand_state);
     }
 }
 
+/**
+ * @brief Renders a scene by tracing rays from the camera.
+ *
+ * This kernel performs the rendering of the scene by shooting rays from the camera's position
+ * for each pixel and computes the color based on interactions with the world.
+ *
+ * @param frame_buffer Pointer to the frame buffer where the resulting pixel color will be stored.
+ * @param max_x Maximum x-coordinate (width) of the image.
+ * @param max_y Maximum y-coordinate (height) of the image.
+ * @param cam Pointer to the camera object used for ray generation.
+ * @param world Pointer to the world (list of hittable objects).
+ * @param rand_state Pointer to the random state structure for generating random numbers.
+ */
 __global__ void render(vec3* frame_buffer, int max_x, int max_y,
                        camera** cam, hittable** world, curandState* rand_state) {
     int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -46,9 +67,18 @@ __global__ void render(vec3* frame_buffer, int max_x, int max_y,
 }
 
 #ifndef RND
-#define RND (curand_uniform(&local_rand_state))
+#define RND (curand_uniform(&local_rand_state)) ///< Macro to generate random float numbers between 0 and 1
 #endif
 
+/**
+ * @brief Creates the scene by populating the world with spheres and setting up the camera.
+ *
+ * @param d_list Pointer to the list of hittable objects.
+ * @param d_world Pointer to the world object containing all hittable objects.
+ * @param d_camera Pointer to the camera object.
+ * @param rec Camera configuration containing scene parameters.
+ * @param rand_state Pointer to the random state structure.
+ */
 __global__ void create_world(hittable** d_list, hittable** d_world,
                              camera** d_camera, cam_record rec, curandState* rand_state) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
@@ -97,6 +127,15 @@ __global__ void create_world(hittable** d_list, hittable** d_world,
     }
 }
 
+/**
+ * @brief Cleans up and deallocates resources used by the world and camera.
+ *
+ * This kernel deletes the objects in the world and the camera to free up memory.
+ *
+ * @param d_list Pointer to the list of hittable objects.
+ * @param d_world Pointer to the world object containing all hittable objects.
+ * @param d_camera Pointer to the camera object.
+ */
 __global__ void delete_world(hittable** d_list, hittable** d_world, camera** d_camera) {
     for (int i = 0; i < num_hittables; i++) {
         delete ((sphere*) d_list[i])->mat;

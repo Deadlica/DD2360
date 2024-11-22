@@ -24,7 +24,18 @@
 
 constexpr dim3 TPB = {32, 32};
 
+/**
+ * @brief Macro to check CUDA errors and terminate the program on failure.
+ * @param val The result of a CUDA API call to check.
+ */
 #define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__)
+/**
+ * @brief Checks the result of a CUDA API call and prints an error message if the call failed.
+ * @param result The result of the CUDA API call.
+ * @param func The name of the function where the error occurred.
+ * @param file The file name where the error occurred.
+ * @param line The line number where the error occurred.
+ */
 inline void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
     if (result) {
         std::cerr << "CUDA error = " << static_cast<unsigned int>(result) << " at " <<
@@ -34,7 +45,15 @@ inline void check_cuda(cudaError_t result, char const *const func, const char *c
     }
 }
 
+/**
+ * @brief Macro to generate a random `vec3` using a CUDA random state.
+ */
 #define RANDVEC3 vec3(curand_uniform(local_rand_state), curand_uniform(local_rand_state), curand_uniform(local_rand_state))
+/**
+ * @brief Generates a random point inside a unit sphere.
+ * @param local_rand_state A pointer to the CUDA random state.
+ * @return A random `vec3` inside the unit sphere.
+ */
 __device__ inline vec3 random_in_unit_sphere(curandState* local_rand_state) {
     vec3 p;
     do {
@@ -43,14 +62,28 @@ __device__ inline vec3 random_in_unit_sphere(curandState* local_rand_state) {
     return p;
 }
 
+/**
+ * @brief Converts degrees to radians.
+ * @param degrees The angle in degrees.
+ * @return The angle in radians.
+ */
 __host__ __device__ inline datatype degrees_to_radians(datatype degrees) {
     return degrees * M_PI / datatype(180.0);
 }
 
+/**
+ * @brief Starts a timer using `gettimeofday`.
+ * @param start A pointer to a `timeval` structure where the start time will be stored.
+ */
 inline void timer_start(struct timeval* start) {
     gettimeofday(start, nullptr);
 }
 
+/**
+ * @brief Stops the timer and calculates the elapsed time in seconds.
+ * @param start A pointer to the `timeval` structure where the start time is stored.
+ * @param elapsed A pointer to a `double` where the elapsed time will be stored.
+ */
 inline void timer_stop(struct timeval* start, double* elapsed) {
     struct timeval end{};
     gettimeofday(&end, nullptr);
