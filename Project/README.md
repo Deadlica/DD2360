@@ -25,10 +25,10 @@ ___
 The following technologies have been tested and are required to run the project:
 - g++ 11.4.0, or newer
 - nvcc 11.15.119, or newer
-- Pip 22.3.1, or newer
 - GNU Make 4.3, or newer
 - CMake 3.22.1
 - Nvidia GPU
+- (Optional) Doxygen 1.11.0, or newer
 
 `Note 1: Older versions might work, but they have not been tested.`
 
