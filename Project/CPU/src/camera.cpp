@@ -14,15 +14,35 @@ void camera::render(const hittable& world) {
                 ray r = get_ray(i, j);
                 pixel_color += ray_color(r, max_depth, world);
             }
+#ifdef SFML
+            _frame_buffer[j * image_width + i] = _pixel_samples_scale * pixel_color;
+#endif
             write_color(std::cout, _pixel_samples_scale * pixel_color);
         }
     }
     std::clog << "\rDone.                 \n";
 }
 
+#ifdef SFML
+const std::vector<color>& camera::frame_buffer() const {
+    return _frame_buffer;
+}
+
+int camera::width() const {
+    return image_width;
+}
+
+int camera::height() const {
+    return _image_height;
+}
+#endif
+
 void camera::initialize() {
     _image_height = int(image_width / aspect_ratio);
     _image_height = _image_height < 1 ? 1 : _image_height;
+#ifdef SFML
+    _frame_buffer.resize(image_width * _image_height);
+#endif
 
     _pixel_samples_scale = 1.0 / samples_per_pixel;
 

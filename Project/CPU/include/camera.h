@@ -38,18 +38,44 @@ public:
      */
     void render(const hittable& world);
 
+#ifdef SFML
+    /**
+     * @brief Accesser to the underlying frame buffer as read-only.
+     *
+     * @return The frame buffer of the rendered image.
+     */
+    const std::vector<color>& frame_buffer() const;
+
+    /**
+     * @brief Accesser for the rendered image width.
+     *
+     * @return The width of the image.
+     */
+    int width() const;
+
+    /**
+     * @brief Accesser for the rendered image height.
+     *
+     * @return The height of the image.
+     */
+    int height() const;
+#endif
+
 private:
-    int      _image_height;
-    datatype _pixel_samples_scale;
-    point3   _center;
-    point3   _pixel00_loc;
-    vec3     _pixel_delta_x;
-    vec3     _pixel_delta_y;
-    vec3     _x;
-    vec3     _y;
-    vec3     _z;
-    vec3     _defocus_disk_x;
-    vec3     _defocus_disk_y;
+    int                _image_height;
+    datatype           _pixel_samples_scale;
+    point3             _center;
+    point3             _pixel00_loc;
+    vec3               _pixel_delta_x;
+    vec3               _pixel_delta_y;
+    vec3               _x;
+    vec3               _y;
+    vec3               _z;
+    vec3               _defocus_disk_x;
+    vec3               _defocus_disk_y;
+#ifdef SFML
+    std::vector<color> _frame_buffer;
+#endif
 
     /**
      * @brief Initializes the camera's internal state for ray tracing.

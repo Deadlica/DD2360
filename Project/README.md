@@ -20,15 +20,18 @@ This repository provides two implementations of a ray tracing application: one u
 
 The CPU implementation closely follows Peter Shirley's version with minor adjustments, whereas the GPU implementation differs slightly more from the blog post. The Nvidia blog introduces significant changes that diverge from Shirley's approach, while our GPU version aims to mimic the CPU implementation as closely as possible. As a result, our GPU version is more aligned with Shirley's original CPU-based design.
 
+Both versions of the program render an image in the PPM format. Additionally, both versions can be built with SFML to directly display the image once rendering is complete.
+
 ## Dependencies
 ___
 The following technologies have been tested and are required to run the project:
 - g++ 11.4.0, or newer
 - nvcc 11.15.119, or newer
 - GNU Make 4.3, or newer
-- CMake 3.22.1
-- Nvidia GPU
+- CMake 3.22.1, or newer
+- (Optional) SFML 2.5.1, or newer
 - (Optional) Doxygen 1.11.0, or newer
+- Nvidia GPU
 
 `Note 1: Older versions might work, but they have not been tested.`
 
@@ -66,7 +69,7 @@ This project supports two build systems: `Make` and `CMake`.
 ### Make
 To build the project, use one of the following commands:
 ```bash
-# Build both versions
+# Build all versions
 make all
 
 # Build the CPU version
@@ -74,6 +77,12 @@ make raytracer_cpu
 
 # Build the GPU version
 make raytracer_gpu
+
+# Build the CPU version with SFML
+make raytracer_cpu_sfml
+
+# Build the GPU version with SFML
+make raytracer_gpu_sfml
 ```
 
 When running the program through `make` commands, the CPU and GPU versions will output the rendered images to `cpu_image.ppm` and `gpu_image.ppm`, respectively. Use the following commands to run them:
@@ -83,21 +92,29 @@ make run_cpu
 
 # Run the GPU version
 make run_gpu
+
+# Run the CPU version with SFML
+make run_cpu_sfml
+
+# Run the GPU version with SFML
+make run_gpu_sfml
 ```
 
 If you prefer to run the programs manually, you can either let the CPU version output to `cpu_image.ppm` and the GPU version to `gpu_image.ppm`, or redirect the output to a file of your choice.
 ```bash
+# raytracer_cpu can be replaced with raytracer_cpu_sfml
 # Run the CPU version and output to cpu_image.ppm
-./raytracer_cpu
+build/raytracer_cpu
 
 # Run the CPU version and output to a custom file (e.g, image.ppm)
-./raytracer_cpu > image.ppm
+build/raytracer_cpu > image.ppm
 
+# raytracer_gpu can be replaced with raytracer_gpu_sfml
 # Run the GPU version and output to gpu_image.ppm
-./raytracer_gpu
+build/raytracer_gpu
 
 # Run the GPU version and output to a custom file (e.g, image.ppm)
-./raytracer_gpu > image.ppm
+build/raytracer_gpu > image.ppm
 ```
 
 To clean up the build, use the following command:
@@ -116,7 +133,7 @@ cmake -B build
 
 To build specific versions, use any of the following commands:
 ```bash
-# Build both versions
+# Build all versions
 cmake --build build
 
 # Build the CPU version
@@ -124,16 +141,24 @@ cmake --build build --target Raytracer-CPU
 
 # Build the GPU version
 cmake --build build --target Raytracer-GPU
+
+# Build the CPU version with SFML
+cmake --build build --target Raytracer-CPU-SFML
+
+# Build the GPU version SFML
+cmake --build build --target Raytracer-GPU-SFML
 ```
 
 To run either version, use any of the following commands:
 ```bash
+# Raytracer-CPU can be replaced with Raytracer-CPU-SFML
 # Run the CPU version and output to cpu_image.ppm
 build/Raytracer-CPU
 
 # Run the CPU version and output to a custom file (e.g, image.ppm)
 build/Raytracer-CPU > image.ppm
 
+# Raytracer-GPU can be replaced with Raytracer-GPU-SFML
 # Run the GPU version and output to gpu_image.ppm
 build/Raytracer-GPU
 
@@ -149,7 +174,7 @@ You can choose between `Debug` or `Release` configurations when building the pro
 # Build "build" directory
 cmake -B build
 
-# Build both versions as Debug
+# Build all versions as Debug
 cmake --build build --config Debug
 
 # Build the CPU version as Debug
@@ -158,7 +183,13 @@ cmake --build build --config Debug --target Raytracer-CPU
 # Build the GPU version as Debug
 cmake --build build --config Debug --target Raytracer-GPU
 
-# Build both versions as Release
+# Build the CPU version with SFML as Debug
+cmake --build build --config Debug --target Raytracer-CPU-SFML
+
+# Build the GPU version with SFML as Debug
+cmake --build build --config Debug --target Raytracer-GPU-SFML
+
+# Build all versions as Release
 cmake --build build --config Release
 
 # Build the CPU version as Release
@@ -166,11 +197,17 @@ cmake --build build --config Release --target Raytracer-CPU
 
 # Build the GPU version as Release
 cmake --build build --config Release --target Raytracer-GPU
+
+# Build the CPU version with SFML as Release
+cmake --build build --config Release --target Raytracer-CPU-SFML
+
+# Build the GPU version with SFML as Release
+cmake --build build --config Release --target Raytracer-GPU-SFML
 ```
 
 ##### On Linux / macOS:
 ```bash
-# Build both versions as Debug
+# Build all versions as Debug
 cmake -B build/Debug -DCMAKE_BUILD_TYPE=Debug
 cmake --build build/Debug
 
@@ -182,7 +219,15 @@ cmake --build build/Debug --target Raytracer-CPU
 cmake -B build/Debug -DCMAKE_BUILD_TYPE=Debug
 cmake --build build/Debug --target Raytracer-GPU
 
-# Build both versions as Release
+# Build the CPU version with SFML as Debug
+cmake -B build/Debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build build/Debug --target Raytracer-CPU-SFML
+
+# Build the GPU version with SFML as Debug
+cmake -B build/Debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build build/Debug --target Raytracer-GPU-SFML
+
+# Build all versions as Release
 cmake -B build/Release -DCMAKE_BUILD_TYPE=Release
 cmake --build build/Release
 
@@ -193,6 +238,14 @@ cmake --build build/Release --target Raytracer-CPU
 # Build the GPU version as Release
 cmake -B build/Release -DCMAKE_BUILD_TYPE=Release
 cmake --build build/Release --target Raytracer-GPU
+
+# Build the CPU version with SFML as Release
+cmake -B build/Release -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release --target Raytracer-CPU-SFML
+
+# Build the GPU version with SMFL as Release
+cmake -B build/Release -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release --target Raytracer-GPU-SFML
 ```
 
 ##### Note about executables

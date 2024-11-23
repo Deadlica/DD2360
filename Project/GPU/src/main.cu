@@ -14,6 +14,11 @@
 #include <unistd.h>
 #include <curand_kernel.h>
 
+// SFML
+#ifdef SFML
+#include <SFML/Graphics.hpp>
+#endif
+
 constexpr int num_hittables = 22 * 22 + 1 + 3; ///< Total number of hittable objects in the scene
 constexpr int seed          = 1984;            ///< Random seed used for generating random numbers
 
@@ -150,8 +155,9 @@ int main() {
     bool redirect = isatty(fileno(stdout));
     std::ofstream output;
     std::streambuf* standard_out;
+    std::string filename = "image_gpu.ppm";
     if (redirect) {
-        output.open("image_gpu.ppm");
+        output.open(filename);
         standard_out = std::cout.rdbuf();
         std::cout.rdbuf(output.rdbuf());
     }
@@ -226,6 +232,53 @@ int main() {
         }
     }
 
+    // restore stdout
+    if (redirect) {
+        std::cout.rdbuf(standard_out);
+        output.close();
+    }
+
+#ifdef SFML
+    sf::Image sfImage;
+    sfImage.create(rec.image_width, image_height);
+
+    const interval color_interval(0.0, 0.999);
+
+    for (int j = 0; j < image_height; j++) {
+        for (int i = 0; i < rec.image_width; i++) {
+            size_t pixel_index = j * rec.image_width + i;
+            vec3 pixel = frame_buffer[pixel_index];
+
+            int r = static_cast<int>(256 * color_interval.clamp(pixel.x()));
+            int g = static_cast<int>(256 * color_interval.clamp(pixel.y()));
+            int b = static_cast<int>(256 * color_interval.clamp(pixel.z()));
+
+            sfImage.setPixel(i, j, sf::Color(r, g, b));
+        }
+    }
+
+    sf::Texture texture;
+    texture.loadFromImage(sfImage);
+    sf::Sprite sprite(texture);
+    sf::RenderWindow window(sf::VideoMode(rec.image_width, image_height), "Rendered Image");
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                window.close();
+            }
+        }
+
+        window.clear();
+        window.draw(sprite);
+        window.display();
+    }
+#endif
+
     // clean up
     checkCudaErrors(cudaDeviceSynchronize());
     delete_world<<<1, 1>>>(d_list, d_world, d_camera);
@@ -236,12 +289,6 @@ int main() {
     checkCudaErrors(cudaFree(d_rand_state2));
     checkCudaErrors(cudaFree(frame_buffer));
     cudaDeviceReset();
-
-    // restore stdout
-    if (redirect) {
-        std::cout.rdbuf(standard_out);
-        output.close();
-    }
 
     return 0;
 }

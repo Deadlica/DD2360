@@ -11,6 +11,11 @@
 #include <fstream>
 #include <unistd.h>
 
+// SFML
+#ifdef SFML
+#include <SFML/Graphics.hpp>
+#endif
+
 /**
  * @brief Fills the world with objects (spheres) of different materials.
  *
@@ -19,13 +24,24 @@
  */
 void fill_world(hittable_list& world);
 
+#ifdef SFML
+/**
+ * @brief Displays a ppm image given a frame buffer of pixels.
+ * @param frame_buffer The frame buffer containing all pixels.
+ * @param width The width of the image.
+ * @param height The height of the image.
+ */
+void display_ppm(const std::vector<color>& frame_buffer, int width, int height);
+#endif
+
 int main() {
     // output setup
     bool redirect = isatty(fileno(stdout));
     std::ofstream output;
     std::streambuf* standard_out;
+    std::string filename = "image_cpu.ppm";
     if (redirect) {
-        output.open("image_cpu.ppm");
+        output.open(filename);
         standard_out = std::cout.rdbuf();
         std::cout.rdbuf(output.rdbuf());
     }
@@ -39,7 +55,7 @@ int main() {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1200;
+    cam.image_width       = 400;
     cam.samples_per_pixel = 10;
     cam.max_depth         = 50;
 
@@ -58,6 +74,11 @@ int main() {
         std::cout.rdbuf(standard_out);
         output.close();
     }
+
+#ifdef SFML
+    display_ppm(cam.frame_buffer(), cam.width(), cam.height());
+#endif
+
     return 0;
 }
 
@@ -104,3 +125,46 @@ void fill_world(hittable_list& world) {
     auto material3 = std::make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
     world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 }
+
+#ifdef SFML
+void display_ppm(const std::vector<color>& frame_buffer, int width, int height) {
+    sf::Image sfImage;
+    sfImage.create(width, height);
+
+    const interval color_interval(0.0, 0.999);
+
+    for (int j = 0; j < height; j++) {
+        for (int i = 0; i < width; i++) {
+            size_t pixel_index = j * width + i;
+            const color& pixel = frame_buffer[pixel_index];
+
+            int r = static_cast<int>(256 * color_interval.clamp(pixel.x()));
+            int g = static_cast<int>(256 * color_interval.clamp(pixel.y()));
+            int b = static_cast<int>(256 * color_interval.clamp(pixel.z()));
+
+            sfImage.setPixel(i, j, sf::Color(r, g, b));
+        }
+    }
+
+    sf::Texture texture;
+    texture.loadFromImage(sfImage);
+
+    sf::Sprite sprite(texture);
+
+    sf::RenderWindow window(sf::VideoMode(width, height), "CPU Ray Tracer");
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+                window.close();
+        }
+
+        window.clear();
+        window.draw(sprite);
+        window.display();
+    }
+}
+#endif
