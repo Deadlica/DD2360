@@ -9,12 +9,17 @@
 
 // std
 #include <fstream>
+#include <chrono>
 #include <unistd.h>
 
 // SFML
 #ifdef SFML
 #include <SFML/Graphics.hpp>
 #endif
+
+using namespace std::chrono;
+using timer = high_resolution_clock;
+using get_time = duration<double>;
 
 /**
  * @brief Fills the world with objects (spheres) of different materials.
@@ -67,7 +72,10 @@ int main() {
     cam.defocus_angle     = 0.6;
     cam.focus_dist        = 10.0;
 
+    auto start = timer::now();
     cam.render(world);
+    auto stop = timer::now();
+    std::clog << "Rendering time: " << get_time(stop - start).count() << " seconds.\n";
 
     // restore stdout
     if (redirect) {
