@@ -165,7 +165,7 @@ int main() {
     // Camera variables
     cam_record rec;
     rec.aspect_ratio      = datatype(16.0) / datatype(9.0);
-    rec.image_width       = 1200;
+    rec.image_width       = 400;
     rec.samples_per_pixel = 10;
 
     rec.vfov              = 20;

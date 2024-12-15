@@ -22,7 +22,7 @@
 #define infinity DBL_MAX
 #endif
 
-constexpr dim3 TPB = {32, 32};
+constexpr dim3 TPB = {32, 1};
 
 /**
  * @brief Macro to check CUDA errors and terminate the program on failure.
