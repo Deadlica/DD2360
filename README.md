@@ -8,6 +8,7 @@ This repository contains the lab assignments and project for the DD2360 course.
 - [Assigment II: CUDA Basics I](https://github.com/Deadlica/DD2360/tree/main/Assignment%20II)
 - [Assigment III: CUDA Basics II](https://github.com/Deadlica/DD2360/tree/main/Assignment%20III)
 - [Assigment IV: Advanced CUDA](https://github.com/Deadlica/DD2360/tree/main/Assignment%20IV)
+- [Bonus Assignment: Tiling and Tensor Core](https://github.com/Deadlica/DD2360/tree/main/Bonus%20Assignment)
 
 ## Project
 
