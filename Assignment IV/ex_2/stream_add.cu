@@ -47,9 +47,6 @@ int main(int argc, char **argv) {
     cudaMallocHost(&hostInput1, allocationSize);
     cudaMallocHost(&hostInput2, allocationSize);
     cudaMallocHost(&hostOutput, allocationSize);
-    //hostInput1 = (DataType*) malloc(allocationSize);
-    //hostInput2 = (DataType*) malloc(allocationSize);
-    //hostOutput = (DataType*) malloc(allocationSize);
     resultRef = (DataType*) malloc(allocationSize);
 
     //@@ Insert code below to initialize hostInput1 and hostInput2 to random numbers, and create reference result in CPU
