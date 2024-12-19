@@ -31,9 +31,7 @@ void timer_stop(struct timeval *start, double* elapsed) {
 
 int main(int argc, char **argv) {
     struct timeval start{};
-    double timeHostToDevice;
-    double timeKernel;
-    double timeDeviceToHost;
+    double timeTotal;
     int inputLength;
     DataType *hostInput1;
     DataType *hostInput2;
@@ -79,26 +77,22 @@ int main(int argc, char **argv) {
     cudaMalloc(&deviceInput2, allocationSize);
     cudaMalloc(&deviceOutput, allocationSize);
 
-    //@@ Insert code to below to Copy memory to the GPU here
-    timer_start(&start);
-    cudaMemcpy(deviceInput1, hostInput1, allocationSize, cudaMemcpyKind::cudaMemcpyHostToDevice);
-    cudaMemcpy(deviceInput2, hostInput2, allocationSize, cudaMemcpyKind::cudaMemcpyHostToDevice);
-    timer_stop(&start, &timeHostToDevice);
-
     //@@ Initialize the 1D grid and block dimensions here
     dim3 db(TPB);
     dim3 dg((inputLength + db.x - 1) / db.x);
 
-    //@@ Launch the GPU Kernel here
     timer_start(&start);
+    //@@ Insert code to below to Copy memory to the GPU here
+    cudaMemcpy(deviceInput1, hostInput1, allocationSize, cudaMemcpyKind::cudaMemcpyHostToDevice);
+    cudaMemcpy(deviceInput2, hostInput2, allocationSize, cudaMemcpyKind::cudaMemcpyHostToDevice);
+
+    //@@ Launch the GPU Kernel here
     vecAdd<<<dg, db>>>(deviceInput1, deviceInput2, deviceOutput, inputLength);
     cudaDeviceSynchronize();
-    timer_stop(&start, &timeKernel);
 
     //@@ Copy the GPU memory back to the CPU here
-    timer_start(&start);
     cudaMemcpy(hostOutput, deviceOutput, allocationSize, cudaMemcpyKind::cudaMemcpyDeviceToHost);
-    timer_stop(&start, &timeDeviceToHost);
+    timer_stop(&start, &timeTotal);
 
     //@@ Insert code below to compare the output with the reference
     for (int i = 0; i < inputLength; i++) {
@@ -119,9 +113,7 @@ int main(int argc, char **argv) {
     free(resultRef);
 
     //@@ Print the time elapsed here
-    printf("Host to Device transfer time: %f s\n", timeHostToDevice);
-    printf("Kernel execution time: %f s\n", timeKernel);
-    printf("Device to Host transfer time: %f s\n", timeDeviceToHost);
+    printf("Execution time: %f s\n", timeTotal);
 
     return 0;
 }
