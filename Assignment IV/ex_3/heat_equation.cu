@@ -199,7 +199,7 @@ int main(int argc, char **argv) {
                                    vecTemp, &zero, vecTmp, CUDA_R_64F,
                                    CUSPARSE_SPMV_ALG_DEFAULT, buffer));
         cputimer_stop();
-        spmvTime += (1000000.0*(t_end.tv_sec-t_start.tv_sec) + t_end.tv_usec-t_start.tv_usec);
+        spmvTime += (1000000.0 * (t_end.tv_sec - t_start.tv_sec) + t_end.tv_usec - t_start.tv_usec);
 
         //@@ Insert code to call cublas api to compute the axpy routine using cuBLAS.
         //@@ This calculation corresponds to: temp = alpha * tmp + temp
