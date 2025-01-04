@@ -1,7 +1,4 @@
 cmake_minimum_required(VERSION 3.20)
-#===================== Ugly Fix ======================
-set(CMAKE_CUDA_COMPILER /usr/local/cuda-12.6/bin/nvcc)
-#=====================================================
 project(Assignment_IV CUDA CXX)
 
 set(ARCH "sm_52")
