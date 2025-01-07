@@ -6,7 +6,7 @@
 #include <limits>
 #include <random>
 
-#define datatype double
+#define datatype float
 
 // Constants
 

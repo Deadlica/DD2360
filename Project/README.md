@@ -31,6 +31,7 @@ The following technologies have been tested and are required to run the project:
 - CMake 3.22.1, or newer
 - (Optional) SFML 2.5.1, or newer
 - (Optional) Doxygen 1.11.0, or newer
+- (Optional) Python 3.10.12, or newer
 - Nvidia GPU
 
 `Note 1: Older versions might work, but they have not been tested.`
@@ -64,7 +65,7 @@ ___
 This project supports two build systems: `Make` and `CMake`.
 
 `Note 2: All commands are to be run from the project root directory.`
-`Note 3: You might need to edit the compute architecture in the "makefile" or "CMakeLists.txt". By default, it is set to sm_50.`
+`Note 3: You might need to edit the compute architecture in the "makefile" or "CMakeLists.txt". By default, it is set to sm_52.`
 <a id="make"></a>
 ### Make
 To build the project, use one of the following commands:
@@ -78,11 +79,17 @@ make raytracer_cpu
 # Build the GPU version
 make raytracer_gpu
 
+# Build the GPU unified memory version
+make raytracer_gpu_unified
+
 # Build the CPU version with SFML
 make raytracer_cpu_sfml
 
 # Build the GPU version with SFML
 make raytracer_gpu_sfml
+
+# Build the GPU unified memory version with SFML
+make raytracer_gpu_sfml_unified
 ```
 
 When running the program through `make` commands, the CPU and GPU versions will output the rendered images to `cpu_image.ppm` and `gpu_image.ppm`, respectively. Use the following commands to run them:
@@ -93,11 +100,17 @@ make run_cpu
 # Run the GPU version
 make run_gpu
 
+# Run the GPU unified memory version
+make run_gpu_unified
+
 # Run the CPU version with SFML
 make run_cpu_sfml
 
 # Run the GPU version with SFML
 make run_gpu_sfml
+
+# Run the GPU unified memory version with SFML
+make run_gpu_sfml_unified
 ```
 
 If you prefer to run the programs manually, you can either let the CPU version output to `cpu_image.ppm` and the GPU version to `gpu_image.ppm`, or redirect the output to a file of your choice.
@@ -115,6 +128,13 @@ build/raytracer_gpu
 
 # Run the GPU version and output to a custom file (e.g, image.ppm)
 build/raytracer_gpu > image.ppm
+
+# raytracer_gpu_unified can be replaced with raytracer_gpu_sfml_unified
+# Run the GPU unified memory version and output to gpu_image.ppm
+build/raytracer_gpu_unified
+
+# Run the GPU unified memory version and output to a custom file (e.g, image.ppm)
+build/raytracer_gpu_unified > image.ppm
 ```
 
 To clean up the build, use the following command:
@@ -142,11 +162,17 @@ cmake --build build --target Raytracer-CPU
 # Build the GPU version
 cmake --build build --target Raytracer-GPU
 
+# Build the GPU unified memory version
+cmake --build build --target Raytracer-GPU-Unified
+
 # Build the CPU version with SFML
 cmake --build build --target Raytracer-CPU-SFML
 
 # Build the GPU version SFML
 cmake --build build --target Raytracer-GPU-SFML
+
+# Build the GPU unified memory version with SFML
+cmake --build build --target Raytracer-GPU-SFML-Unified
 ```
 
 To run either version, use any of the following commands:
@@ -164,6 +190,14 @@ build/Raytracer-GPU
 
 # Run the GPU version and output to a custom file (e.g, image.ppm)
 build/Raytracer-GPU > image.ppm
+
+# Raytracer-GPU-Unified can be replaced with Raytracer-GPU-SFML-Unified
+# Run the GPU unified memory version and output to gpu_image.ppm
+build/Raytracer-GPU-Unified
+
+# Run the GPU unified memory version and output to a custom file (e.g, image.ppm)
+build/Raytracer-GPU-Unified > image.ppm
+
 ```
 
 #### Optimized builds
@@ -183,11 +217,17 @@ cmake --build build --config Debug --target Raytracer-CPU
 # Build the GPU version as Debug
 cmake --build build --config Debug --target Raytracer-GPU
 
+# Build the GPU unified memory version as Debug
+cmake --build build --config Debug --target Raytracer-GPU-Unified
+
 # Build the CPU version with SFML as Debug
 cmake --build build --config Debug --target Raytracer-CPU-SFML
 
 # Build the GPU version with SFML as Debug
 cmake --build build --config Debug --target Raytracer-GPU-SFML
+
+# Build the GPU unified memory version with SFML as Debug
+cmake --build build --config Debug --target Raytracer-GPU-SFML-Unified
 
 # Build all versions as Release
 cmake --build build --config Release
@@ -198,11 +238,17 @@ cmake --build build --config Release --target Raytracer-CPU
 # Build the GPU version as Release
 cmake --build build --config Release --target Raytracer-GPU
 
+# Build the GPU unified memory version as Release
+cmake --build build --config Release --target Raytracer-GPU-Unified
+
 # Build the CPU version with SFML as Release
 cmake --build build --config Release --target Raytracer-CPU-SFML
 
 # Build the GPU version with SFML as Release
 cmake --build build --config Release --target Raytracer-GPU-SFML
+
+# Build the GPU unified memory version with SFML as Release
+cmake --build build --config Release --target Raytracer-GPU-SFML-Unified
 ```
 
 ##### On Linux / macOS:
@@ -227,6 +273,14 @@ cmake --build build/Debug --target Raytracer-CPU-SFML
 cmake -B build/Debug -DCMAKE_BUILD_TYPE=Debug
 cmake --build build/Debug --target Raytracer-GPU-SFML
 
+# Build the GPU unified memory version as Debug
+cmake -B build/Debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build build/Debug --target Raytracer-GPU-Unified
+
+# Build the GPU unified memory version with SFML as Debug
+cmake -B build/Debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build build/Debug --target Raytracer-GPU-SFML-Unified
+
 # Build all versions as Release
 cmake -B build/Release -DCMAKE_BUILD_TYPE=Release
 cmake --build build/Release
@@ -246,6 +300,14 @@ cmake --build build/Release --target Raytracer-CPU-SFML
 # Build the GPU version with SMFL as Release
 cmake -B build/Release -DCMAKE_BUILD_TYPE=Release
 cmake --build build/Release --target Raytracer-GPU-SFML
+
+# Build the GPU unified memory version as Release
+cmake -B build/Release -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release --target Raytracer-GPU-Unified
+
+# Build the GPU unified memory version with SFML as Release
+cmake -B build/Release -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release --target Raytracer-GPU-SFML-Unified
 ```
 
 ##### Note about executables
@@ -263,7 +325,7 @@ In `CPU/src/main.cpp`, locate the following code section:
 ```cpp
 ...
 cam.aspect_ratio      = 16.0 / 9.0;
-cam.image_width       = 1200;
+cam.image_width       = width;
 cam.samples_per_pixel = 10;
 cam.max_depth         = 50;
   
@@ -284,7 +346,7 @@ Similarly, in `GPU/src/main.cu`, find this section:
 ```cpp
 ...
 rec.aspect_ratio      = datatype(16.0) / datatype(9.0);
-rec.image_width       = 1200;
+rec.image_width       = width;
 rec.samples_per_pixel = 10;
 
 rec.vfov              = 20;
@@ -300,3 +362,36 @@ rec.focus_dist        = 10.0;
 After modifying these values, rebuild the GPU version executable using either [Make](#make) or [CMake](#cmake).
 
 Once rebuilt, run the program as described in the [Building and Running](#build-run) section.
+
+## Benchmarking Plots
+A Python script is provided to efficiently generate plots while benchmarking the different ray tracing implementations. To begin, set up a Python virtual environment:
+```bash
+# Create the venv
+python3 -m venv venv
+
+# Activate it (windows)
+venv\Scripts\activate
+
+# Activate it (Linux/MacOS)
+source venv/bin/activate
+```
+
+Next, you can use Make to run a predefined test configuration with the following command:
+
+```bash
+make benchmark
+```
+
+To run the script manually, use the following command to view the available CLI arguments:
+
+```bash
+python3 scripts/benchmark.py --help
+```
+
+### Example Configuration
+
+```bash
+python3 scripts/benchmark.py -cgm -c -r 10 -w 500 1000 1500 2000
+```
+
+This command compares the non-unified and unified memory versions, running 10 samples per render with image widths of 500, 1000, 1500, and 2000. Additionally, it cleans up the build files upon completion.
