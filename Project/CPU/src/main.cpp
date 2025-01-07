@@ -39,7 +39,7 @@ void fill_world(hittable_list& world);
 void display_ppm(const std::vector<color>& frame_buffer, int width, int height);
 #endif
 
-int main() {
+int main(int argc, char** argv) {
     // output setup
     bool redirect = isatty(fileno(stdout));
     std::ofstream output;
@@ -51,6 +51,20 @@ int main() {
         std::cout.rdbuf(output.rdbuf());
     }
 
+    int width = 1200;
+    if (argc == 2) {
+        try {
+            width = std::stoi(argv[1]);
+        } catch (std::invalid_argument& e) {
+            std::cerr << "Invalid argument! Expected 'int', but got '" << argv[1] << "'.\n";
+            return 0;
+        }
+        if (width < 100) {
+            std::cerr << "Invalid width! width=" << width << " is to small, minimum required is width=100.\n";
+            return 0;
+        }
+    }
+
     hittable_list world;
 
     // Scene
@@ -60,7 +74,7 @@ int main() {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400;
+    cam.image_width       = width;
     cam.samples_per_pixel = 10;
     cam.max_depth         = 50;
 

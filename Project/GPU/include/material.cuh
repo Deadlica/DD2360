@@ -1,6 +1,7 @@
 #ifndef GPU_MATERIAL_CUH
 #define GPU_MATERIAL_CUH
 
+// Project
 #include <hittable.cuh>
 #include <color.cuh>
 

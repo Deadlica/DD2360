@@ -150,7 +150,7 @@ __global__ void delete_world(hittable** d_list, hittable** d_world, camera** d_c
     delete *d_camera;
 }
 
-int main() {
+int main(int argc, char** argv) {
     // output setup
     bool redirect = isatty(fileno(stdout));
     std::ofstream output;
@@ -162,10 +162,24 @@ int main() {
         std::cout.rdbuf(output.rdbuf());
     }
 
+    int width = 1200;
+    if (argc == 2) {
+        try {
+            width = std::stoi(argv[1]);
+        } catch (std::invalid_argument& e) {
+            std::cerr << "Invalid argument! Expected 'int', but got '" << argv[1] << "'.\n";
+            return 0;
+        }
+        if (width < 100) {
+            std::cerr << "Invalid width! width=" << width << " is to small, minimum required is width=100.\n";
+            return 0;
+        }
+    }
+
     // Camera variables
     cam_record rec;
     rec.aspect_ratio      = datatype(16.0) / datatype(9.0);
-    rec.image_width       = 400;
+    rec.image_width       = width;
     rec.samples_per_pixel = 10;
 
     rec.vfov              = 20;
@@ -184,7 +198,14 @@ int main() {
     // Frame buffer
     size_t frame_buffer_size = num_pixels * sizeof(vec3);
     vec3* frame_buffer;
+
+#ifdef UNIFIED
     checkCudaErrors(cudaMallocManaged((void**) &frame_buffer, frame_buffer_size));
+#else
+    vec3* d_frame_buffer;
+    checkCudaErrors(cudaMalloc((void**) &d_frame_buffer, frame_buffer_size));
+    frame_buffer = new vec3[frame_buffer_size];
+#endif
 
     // Curand
     curandState *d_rand_state;
@@ -203,6 +224,7 @@ int main() {
     checkCudaErrors(cudaMalloc((void**) &d_world, sizeof(hittable*)));
     camera**   d_camera;
     checkCudaErrors(cudaMalloc((void**) &d_camera, sizeof(camera*)));
+
     create_world<<<1, 1>>>(d_list, d_world, d_camera, rec, d_rand_state2);
     checkCudaErrors(cudaGetLastError());
     checkCudaErrors(cudaDeviceSynchronize());
@@ -214,10 +236,19 @@ int main() {
     dim3 db(TPB.x, TPB.y);
     dim3 dg((rec.image_width + db.x - 1) / db.x, (image_height + db.y - 1) / db.y);
 
+#ifdef UNIFIED
     render<<<dg, db>>>(frame_buffer, rec.image_width, image_height,
                        d_camera, d_world, d_rand_state);
+#else
+    render<<<dg, db>>>(d_frame_buffer, rec.image_width, image_height,
+                       d_camera, d_world, d_rand_state);
+#endif
     checkCudaErrors(cudaGetLastError());
     checkCudaErrors(cudaDeviceSynchronize());
+
+#ifndef UNIFIED
+    checkCudaErrors(cudaMemcpy(frame_buffer, d_frame_buffer, frame_buffer_size, cudaMemcpyDeviceToHost));
+#endif
 
     double time_elapsed;
     timer_stop(&start, &time_elapsed);
@@ -287,7 +318,12 @@ int main() {
     checkCudaErrors(cudaFree(d_world));
     checkCudaErrors(cudaFree(d_list));
     checkCudaErrors(cudaFree(d_rand_state2));
+#ifdef UNIFIED
     checkCudaErrors(cudaFree(frame_buffer));
+#else
+    checkCudaErrors(cudaFree(d_frame_buffer));
+    delete[] frame_buffer;
+#endif
     cudaDeviceReset();
 
     return 0;

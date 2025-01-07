@@ -10,40 +10,32 @@
 #include <curand_kernel.h>
 #include <float.h>
 
-#ifndef datatype
-#define datatype float
-#endif
-#ifndef M_PI
-#define M_PI 3.1415926535897932385
-#endif
-#if   defined(datatype) && datatype == float
-#define infinity FLT_MAX
-#elif defined(datatype) && datatype == double
-#define infinity DBL_MAX
-#endif
-
 constexpr dim3 TPB = {32, 1};
 
 /**
  * @brief Macro to check CUDA errors and terminate the program on failure.
  * @param val The result of a CUDA API call to check.
  */
-#define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__)
-/**
- * @brief Checks the result of a CUDA API call and prints an error message if the call failed.
- * @param result The result of the CUDA API call.
- * @param func The name of the function where the error occurred.
- * @param file The file name where the error occurred.
- * @param line The line number where the error occurred.
- */
-inline void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
-    if (result) {
-        std::cerr << "CUDA error = " << static_cast<unsigned int>(result) << " at " <<
-                  file << ":" << line << " '" << func << "' \n";
-        cudaDeviceReset();
-        exit(99);
+#ifdef DEBUG
+    #define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__)
+    /**
+     * @brief Checks the result of a CUDA API call and prints an error message if the call failed.
+     * @param result The result of the CUDA API call.
+     * @param func The name of the function where the error occurred.
+     * @param file The file name where the error occurred.
+     * @param line The line number where the error occurred.
+     */
+    inline void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
+        if (result) {
+            std::cerr << "CUDA error = " << static_cast<unsigned int>(result) << " at " <<
+                      file << ":" << line << " '" << func << "' \n";
+            cudaDeviceReset();
+            exit(99);
+        }
     }
-}
+#else
+    #define checkCudaErrors(val) (val) // No-op in release builds
+#endif
 
 /**
  * @brief Macro to generate a random `vec3` using a CUDA random state.

@@ -1,14 +1,13 @@
 #ifndef GPU_VEC3_CUH
 #define GPU_VEC3_CUH
 
+// Project
+#include <precision.cuh>
+
 // std
 #include <cmath>
 #include <iostream>
 #include <curand_kernel.h>
-
-#ifndef datatype
-#define datatype float
-#endif
 
 /**
  * @class vec3
