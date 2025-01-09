@@ -1,3 +1,4 @@
+// Project
 #include <material.cuh>
 
 __device__ bool material::scatter(const ray& r_in, const hit_record& rec, color& attenuation,
