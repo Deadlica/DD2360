@@ -57,7 +57,7 @@ __global__ void render(vec3* frame_buffer, int max_x, int max_y,
         return;
     }
     int pixel_index = y * max_x + x;
-    curand_init(1984 + pixel_index, 0, 0, &rand_state[pixel_index]);
+    curand_init(seed + pixel_index, 0, 0, &rand_state[pixel_index]);
     curandState local_rand_state = rand_state[pixel_index];
     int samples_per_pixel = (*cam)->samples_per_pixel;
     color pixel_color(0, 0, 0);
