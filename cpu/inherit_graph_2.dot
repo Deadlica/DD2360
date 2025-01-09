@@ -1,0 +1,12 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="hittable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classhittable.html",tooltip="Abstract base class for objects that can be intersected by rays."];
+  Node0 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="hittable_list",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classhittable__list.html",tooltip="A collection of hittable objects that can be intersected by rays."];
+  Node0 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="sphere",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsphere.html",tooltip="Represents a sphere object in 3D space."];
+}

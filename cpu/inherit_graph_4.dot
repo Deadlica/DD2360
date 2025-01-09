@@ -1,0 +1,14 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="material",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classmaterial.html",tooltip="Base class for materials that interact with light in ray tracing."];
+  Node0 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="dielectric",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classdielectric.html",tooltip="Dielectric material that refracts light."];
+  Node0 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="lambertian",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classlambertian.html",tooltip="Lambertian (diffuse) material that scatters light uniformly in all directions."];
+  Node0 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="metal",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classmetal.html",tooltip="Metal material that reflects light with a shiny surface."];
+}

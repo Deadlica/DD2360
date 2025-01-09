@@ -1,0 +1,9 @@
+digraph "lambertian"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="lambertian",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Lambertian (diffuse) material that scatters light uniformly in all directions."];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="material",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classmaterial.html",tooltip="Base class for materials that interact with light in ray tracing."];
+}
