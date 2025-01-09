@@ -240,7 +240,7 @@ __host__ __device__ inline vec3 operator*(datatype lhs, const vec3& rhs) {
  * @return A new vector scaled by 1/rhs.
  */
 __host__ __device__ inline vec3 operator/(const vec3& lhs, datatype rhs) {
-    return (1 / rhs) * lhs;
+    return (datatype(1) / rhs) * lhs;
 }
 
 /**
@@ -308,7 +308,7 @@ __device__ inline vec3 random_in_unit_disk(curandState *local_rand_state) {
  * @return The reflected vector.
  */
 __host__ __device__ inline vec3 reflect(const vec3& v, const vec3& n) {
-    return v - 2 * dot(v, n) * n;
+    return v - datatype(2) * dot(v, n) * n;
 }
 
 /**

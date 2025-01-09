@@ -98,7 +98,7 @@ __host__ __device__ bool vec3::near_zero() const {
 }
 
 __host__ __device__ void vec3::make_unit_vector() {
-    datatype k = 1.0 / std::sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
+    datatype k = datatype(1.0) / std::sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
     e[0] *= k;
     e[1] *= k;
     e[2] *= k;
